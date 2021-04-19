@@ -1,2 +1,15 @@
-# we_media_web
-个人媒体博客前端
+# umi project
+
+## Getting Started
+
+Install dependencies,
+
+```bash
+$ yarn
+```
+
+Start the dev server,
+
+```bash
+$ yarn start
+```
