@@ -1,2 +1,3 @@
 import IconFont from '@/components/Icon';
-export { IconFont };
+import HomeCard from '@/components/HomeCard';
+export { IconFont, HomeCard };

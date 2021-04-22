@@ -35,6 +35,14 @@ const routes: Route[] = [
             path: '/frame/home',
             component: '@/pages/home',
           },
+          {
+            path: '/frame/channels',
+            component: '@/pages/channels',
+          },
+          {
+            path: '/frame/categories',
+            component: '@/pages/categories',
+          },
         ],
       },
     ],
