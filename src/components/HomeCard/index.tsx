@@ -1,15 +1,22 @@
 import React, { FC, memo } from 'react';
 import { CardHeader, StyledHomeCard } from '@/components/HomeCard/style';
-const HomeCard: FC = () => {
+interface IProps {
+  title?: React.ReactNode;
+  desc?: React.ReactNode;
+  action?: React.ReactNode;
+  children?: React.ReactElement;
+}
+const HomeCard: FC<IProps> = ({ children, desc, title, action }) => {
   return (
     <StyledHomeCard>
       <CardHeader>
         <div className={'title-desc'}>
-          <div className={'title'}>Featured Videos</div>
-          <div className={'desc'}>Channals You are Fallowing</div>
+          <div className={'title'}>{title}</div>
+          <div className={'desc'}>{desc}</div>
         </div>
-        <div className={'action'}>-</div>
+        <div className={'action'}>{action}</div>
       </CardHeader>
+      <div>{children}</div>
     </StyledHomeCard>
   );
 };

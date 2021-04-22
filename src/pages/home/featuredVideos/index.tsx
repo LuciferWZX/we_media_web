@@ -1,10 +1,11 @@
 import React, { FC } from 'react';
-import { HomeCard } from '@/components';
+import { HomeCard, Video, VideoCard } from '@/components';
 const FeaturedVideos: FC = () => {
   return (
     <div>
-      <HomeCard />
-      xxx
+      <HomeCard title={'Featured Videos'} desc={'Channels You are Fallowing'}>
+        <VideoCard banner={<Video type={'tiny'} />} />
+      </HomeCard>
     </div>
   );
 };

@@ -2,9 +2,11 @@ import styled from 'styled-components';
 import { overflowHidden } from '@/mixin/font';
 export const StyledHomeCard = styled.div`
   padding: 20px;
+  cursor: pointer;
 `;
 export const CardHeader = styled.header`
   display: flex;
+  padding-bottom: 15px;
   .title-desc {
     flex: 1;
     .title {
