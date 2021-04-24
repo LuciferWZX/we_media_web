@@ -1,6 +1,22 @@
 @import 'reset.min.css';
 body {
   background-color: #f7f7f7;
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    background: #f7f7f7;
+  }
+  ::-webkit-scrollbar-button {
+    display: none;
+  }
+  ::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: orange;
+  }
+  ::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background: transparent;
+  }
 }
 .video-drop-down {
   .ant-dropdown-menu-item-active {
