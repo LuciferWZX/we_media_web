@@ -6,12 +6,11 @@ import { MenuInfo } from 'rc-menu/lib/interface';
 import { VideoAction } from '@/utils/types/enum';
 import Swiper from 'swiper';
 import 'swiper/swiper-bundle.min.css';
-import { StyledFeaturedVideo } from './style';
-import { Space } from 'antd';
+import { StyledSubscriptionVideo } from './style';
 interface IState {
   videoDropDownMenu: VideoDropDownMenu[];
 }
-const FeaturedVideos: FC = () => {
+const SubscriptionVideos: FC = () => {
   /*@todo 内部状态 */
   const state = useReactive<IState>({
     videoDropDownMenu: [],
@@ -23,7 +22,7 @@ const FeaturedVideos: FC = () => {
       { key: VideoAction.collect, label: '收藏', icon: 'icon-shoucang' },
       { key: VideoAction.share, label: '分享', icon: 'icon-fenxiang' },
     ];
-    new Swiper('.swiper-container-featured-videos', {
+    new Swiper('.swiper-container-subscription-videos', {
       direction: 'horizontal',
       loop: false,
       loopPreventsSlide: true,
@@ -31,10 +30,6 @@ const FeaturedVideos: FC = () => {
       observeParents: true,
       slidesPerView: 4,
       slidesPerGroup: 1,
-      navigation: {
-        nextEl: '.swiper-button-next-feature-video',
-        prevEl: '.swiper-button-prev-feature-video',
-      },
     });
   });
   /**
@@ -76,28 +71,20 @@ const FeaturedVideos: FC = () => {
     />
   );
   return (
-    <StyledFeaturedVideo>
+    <StyledSubscriptionVideo>
       <HomeCard
         className={'videos-card'}
         containerClassName={'videos-card-container'}
-        title={'Featured Videos'}
+        title={'Updates From Subscriptions'}
         action={[
-          <Space key={'prev-next'} direction={'horizontal'}>
-            <div className="swiper-button-prev-feature-video swiper-btn">
-              <IconFont
-                type={'icon-qianjin'}
-                rotate={180}
-                className={'action-icon'}
-              />
-            </div>
-            <div className="swiper-button-next-feature-video swiper-btn">
-              <IconFont type={'icon-qianjin'} className={'action-icon'} />
-            </div>
-          </Space>,
+          <div key={'see-all'} className={'see-all'}>
+            <span>查看全部</span>
+            <IconFont type={'icon-qianjin'} className={'action-icon'} />
+          </div>,
         ]}
         desc={'Channels You are Fallowing'}
       >
-        <div className="swiper-container-featured-videos">
+        <div className="swiper-container-subscription-videos">
           <div className="swiper-wrapper swiper-wrapper-video-box">
             <div className="swiper-slide swiper-video-box">{data}</div>
             <div className="swiper-slide swiper-video-box">{data}</div>
@@ -107,7 +94,7 @@ const FeaturedVideos: FC = () => {
           </div>
         </div>
       </HomeCard>
-    </StyledFeaturedVideo>
+    </StyledSubscriptionVideo>
   );
 };
-export default memo(FeaturedVideos);
+export default memo(SubscriptionVideos);

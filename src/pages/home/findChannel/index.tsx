@@ -1,17 +1,16 @@
 import React, { FC, memo } from 'react';
-import { HomeCard, IconFont, Video, VideoCard } from '@/components';
+import { ChannelCard, HomeCard, IconFont } from '@/components';
 import { VideoDropDownMenu } from '@/components/Video';
 import { useMount, useReactive } from 'ahooks';
-import { MenuInfo } from 'rc-menu/lib/interface';
 import { VideoAction } from '@/utils/types/enum';
 import Swiper from 'swiper';
 import 'swiper/swiper-bundle.min.css';
-import { StyledFeaturedVideo } from './style';
+import { StyledFindChannel } from './style';
 import { Space } from 'antd';
 interface IState {
   videoDropDownMenu: VideoDropDownMenu[];
 }
-const FeaturedVideos: FC = () => {
+const FindChannel: FC = () => {
   /*@todo 内部状态 */
   const state = useReactive<IState>({
     videoDropDownMenu: [],
@@ -23,7 +22,7 @@ const FeaturedVideos: FC = () => {
       { key: VideoAction.collect, label: '收藏', icon: 'icon-shoucang' },
       { key: VideoAction.share, label: '分享', icon: 'icon-fenxiang' },
     ];
-    new Swiper('.swiper-container-featured-videos', {
+    new Swiper('.swiper-container-find-channel', {
       direction: 'horizontal',
       loop: false,
       loopPreventsSlide: true,
@@ -32,72 +31,53 @@ const FeaturedVideos: FC = () => {
       slidesPerView: 4,
       slidesPerGroup: 1,
       navigation: {
-        nextEl: '.swiper-button-next-feature-video',
-        prevEl: '.swiper-button-prev-feature-video',
+        nextEl: '.swiper-button-next-find-channel',
+        prevEl: '.swiper-button-prev-find-channel',
       },
     });
   });
-  /**
-   * @todo video点击下拉菜单
-   * @param info
-   */
-  const handleDropDownMenu = (info: MenuInfo): void => {
-    info.domEvent.stopPropagation();
-    console.log(info.key);
-  };
-  /**
-   * @todo 点击video去播放
-   */
-  const clickVideo = (): void => {
-    console.log('播放了');
-  };
+
   const data = (
-    <VideoCard
-      desc={'这是我今天上传的小视频.'}
+    <ChannelCard
       avatarSrc={
-        'https://dss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2909072015,3629141008&fm=26&gp=0.jpg'
+        'https://dss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=807498736,2545362365&fm=26&gp=0.jpg'
       }
-      publisher={'蝙蝠侠🦇'}
-      publishTime={'2 星期前'}
-      viewCount={'531k'}
-      banner={
-        <Video
-          onClick={clickVideo}
-          videoImage={
-            'http://demo.kangjingept.com:8020/cssthemes6/4.14ZF02/assets/images/video-thumbal/1.png'
-          }
-          viewCount={'2.7M'}
-          videoTime={'40:00'}
-          dropDownMenu={state.videoDropDownMenu}
-          dropDownMenuClick={handleDropDownMenu}
-          type={'tiny'}
-        />
+      backImage={
+        'https://tenfei01.cfp.cn/creative/vcg/veer/800water/veer-158832945.jpg'
       }
+      title={'Self Development'}
+      desc={'55K Subscribers . 16 Videos 6M views'}
     />
   );
   return (
-    <StyledFeaturedVideo>
+    <StyledFindChannel>
       <HomeCard
         className={'videos-card'}
         containerClassName={'videos-card-container'}
-        title={'Featured Videos'}
+        title={'Find Channel'}
         action={[
           <Space key={'prev-next'} direction={'horizontal'}>
-            <div className="swiper-button-prev-feature-video swiper-btn">
+            <div key={'see-all'} className={'see-all'}>
+              <span>查看全部</span>
+              <IconFont type={'icon-qianjin'} className={'action-icon'} />
+            </div>
+            <div className="swiper-button-prev-find-channel swiper-btn">
               <IconFont
                 type={'icon-qianjin'}
                 rotate={180}
                 className={'action-icon'}
               />
             </div>
-            <div className="swiper-button-next-feature-video swiper-btn">
+            <div className="swiper-button-next-find-channel swiper-btn">
               <IconFont type={'icon-qianjin'} className={'action-icon'} />
             </div>
           </Space>,
         ]}
-        desc={'Channels You are Fallowing'}
       >
-        <div className="swiper-container-featured-videos">
+        <div
+          className="swiper-container-find-channel"
+          style={{ overflowX: 'hidden' }}
+        >
           <div className="swiper-wrapper swiper-wrapper-video-box">
             <div className="swiper-slide swiper-video-box">{data}</div>
             <div className="swiper-slide swiper-video-box">{data}</div>
@@ -107,7 +87,7 @@ const FeaturedVideos: FC = () => {
           </div>
         </div>
       </HomeCard>
-    </StyledFeaturedVideo>
+    </StyledFindChannel>
   );
 };
-export default memo(FeaturedVideos);
+export default memo(FindChannel);

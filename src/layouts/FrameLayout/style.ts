@@ -68,4 +68,6 @@ export const StyledContent = styled.div`
   flex: 1;
   height: calc(100vh - 4.0625pc);
   overflow: auto;
+  display: flex;
+  justify-content: center;
 `;

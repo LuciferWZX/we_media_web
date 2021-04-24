@@ -3,31 +3,38 @@ import { StyledVideoCard } from '@/components/videoCard/style';
 import { Avatar, Typography } from 'antd';
 interface IProps {
   banner?: React.ReactNode;
+  desc?: React.ReactNode;
+  avatarSrc?: React.ReactNode;
+  publisher?: React.ReactNode;
+  publishTime?: React.ReactNode;
+  viewCount?: React.ReactNode;
 }
 const { Paragraph } = Typography;
-const VideoCard: FC<IProps> = ({ banner }) => {
+const VideoCard: FC<IProps> = ({
+  banner,
+  desc,
+  avatarSrc,
+  publisher,
+  publishTime,
+  viewCount,
+}) => {
   return (
     <StyledVideoCard>
       <div className={'banner'}>{banner}</div>
       <div className={'desc'}>
-        <Paragraph ellipsis={{ rows: 2, expandable: false }}>
-          Ant Design, a design language for background applications, is refined
-          by Ant UED Team. Ant Design, a design language for background
-          applications, is refined by Ant UED Team. Ant Design, a design
-          language for background applications, is refined by Ant UED Team. Ant
-          Design, a design language for background applications, is refined by
-          Ant UED Team. Ant Design, a design language for background
-          applications, is refined by Ant UED Team. Ant Design, a design
-          language for background applications, is refined by Ant UED Team.
-        </Paragraph>
+        <Paragraph ellipsis={{ rows: 2, expandable: false }}>{desc}</Paragraph>
       </div>
       <div className={'account-box'}>
-        <Avatar />
+        <div className={'avatar-box'}>
+          <Avatar src={avatarSrc} />
+        </div>
         <div className={'account-info'}>
-          <div>Jonathan Madano</div>
-          <div>
-            <span>531k 浏览 </span>
-            <span>2 星期前 </span>
+          <div className={'account-name'}>{publisher}</div>
+          <div className={'account-video-info'}>
+            <span className={'account-views'}>
+              <span>{viewCount}</span> 浏览{' '}
+            </span>
+            <span className={'account-time'}>{publishTime}</span>
           </div>
         </div>
       </div>

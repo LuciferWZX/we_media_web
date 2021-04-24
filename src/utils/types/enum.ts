@@ -3,3 +3,9 @@ export enum Pathname {
   channels = '/frame/channels',
   categories = '/frame/categories',
 }
+export enum VideoAction {
+  watchLater = 'watchLater',
+  collect = 'collect',
+  disCollect = 'disCollect',
+  share = 'share',
+}

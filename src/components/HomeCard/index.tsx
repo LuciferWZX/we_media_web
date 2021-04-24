@@ -3,12 +3,21 @@ import { CardHeader, StyledHomeCard } from '@/components/HomeCard/style';
 interface IProps {
   title?: React.ReactNode;
   desc?: React.ReactNode;
-  action?: React.ReactNode;
-  children?: React.ReactElement;
+  action?: React.ReactNode | React.ReactNode[];
+  children?: React.ReactElement | React.ReactElement[];
+  className?: string;
+  containerClassName?: string;
 }
-const HomeCard: FC<IProps> = ({ children, desc, title, action }) => {
+const HomeCard: FC<IProps> = ({
+  containerClassName,
+  className,
+  children,
+  desc,
+  title,
+  action,
+}) => {
   return (
-    <StyledHomeCard>
+    <StyledHomeCard className={className}>
       <CardHeader>
         <div className={'title-desc'}>
           <div className={'title'}>{title}</div>
@@ -16,7 +25,7 @@ const HomeCard: FC<IProps> = ({ children, desc, title, action }) => {
         </div>
         <div className={'action'}>{action}</div>
       </CardHeader>
-      <div>{children}</div>
+      <div className={containerClassName}>{children}</div>
     </StyledHomeCard>
   );
 };

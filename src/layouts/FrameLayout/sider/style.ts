@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const StyledSider = styled.div<{ isScroll: boolean }>`
-  width: ${({ isScroll }) => (isScroll ? 0 : '200px')};
+  width: ${({ isScroll }) => (isScroll ? 0 : '240px')};
   transition-duration: 0.2s;
   transition-property: width;
   background-color: white;

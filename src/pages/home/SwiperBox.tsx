@@ -16,6 +16,7 @@ const SwiperBox: FC = () => {
       autoplay: {
         delay: 2000,
       },
+      parallax: true,
       resizeObserver: true,
       observeParents: true,
       pagination: {
@@ -34,9 +35,32 @@ const SwiperBox: FC = () => {
     <StyledSwiperBox>
       <div className={'swiper-container'}>
         <div className="swiper-wrapper">
-          <div className="swiper-slide">图片1</div>
-          <div className="swiper-slide"> 图片2</div>
-          <div className="swiper-slide"> 图片3</div>
+          <div className="swiper-slide">
+            <div
+              className={'home-swiper-background'}
+              style={{
+                backgroundImage: `url(https://images.unsplash.com/photo-1618480547214-e8efa3bc6c40?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80)`,
+              }}
+            >
+              This is your destiny
+            </div>
+          </div>
+          <div className="swiper-slide">
+            <div
+              className={'home-swiper-background'}
+              style={{
+                backgroundImage: `url(https://images.unsplash.com/photo-1619146601359-68d13dd7b448?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1588&q=80)`,
+              }}
+            />
+          </div>
+          <div className="swiper-slide">
+            <div
+              className={'home-swiper-background'}
+              style={{
+                backgroundImage: `url(https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80)`,
+              }}
+            />
+          </div>
         </div>
         <div className="swiper-button-prev swiper-btn">
           <IconFont

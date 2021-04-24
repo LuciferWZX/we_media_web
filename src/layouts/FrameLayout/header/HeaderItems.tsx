@@ -33,7 +33,10 @@ const HeaderItemsBox: FC = () => {
       <li>
         <Avatar
           style={{ backgroundColor: 'orange', verticalAlign: 'middle' }}
-          size="small"
+          size={32}
+          src={
+            'https://dss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=73163259,1373343321&fm=26&gp=0.jpg'
+          }
         >
           user
         </Avatar>

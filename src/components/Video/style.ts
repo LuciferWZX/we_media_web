@@ -1,18 +1,31 @@
 import styled from 'styled-components';
 export const StyledVideo = styled.div``;
 export const StyledTinyVideo = styled.div`
-  height: 140px;
   border-radius: 10px;
   background-color: navajowhite;
   position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
-
+  overflow: hidden;
+  cursor: pointer;
   :hover {
+    background-size: 120% 120%;
     .play {
       opacity: 1;
     }
+    .video-image {
+      transform: scale(1.2);
+    }
+  }
+  .video-image {
+    height: 100%;
+    width: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition-property: transform;
+    transition-duration: 0.3s;
   }
   .play {
     position: absolute;
@@ -40,6 +53,7 @@ export const StyledTinyVideo = styled.div`
     position: absolute;
     left: 15px;
     top: 15px;
+    font-weight: 600;
     .eye {
       font-size: 16px;
       margin-right: 5px;
@@ -48,7 +62,6 @@ export const StyledTinyVideo = styled.div`
   .more {
     color: white;
     font-size: 20px;
-    cursor: pointer;
     position: absolute;
     right: 15px;
     top: 15px;
