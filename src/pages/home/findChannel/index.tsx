@@ -74,10 +74,7 @@ const FindChannel: FC = () => {
           </Space>,
         ]}
       >
-        <div
-          className="swiper-container-find-channel"
-          style={{ overflowX: 'hidden' }}
-        >
+        <div className="swiper-container-find-channel">
           <div className="swiper-wrapper swiper-wrapper-video-box">
             <div className="swiper-slide swiper-video-box">{data}</div>
             <div className="swiper-slide swiper-video-box">{data}</div>

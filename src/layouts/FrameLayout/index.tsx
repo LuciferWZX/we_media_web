@@ -1,20 +1,17 @@
 import React, { FC, memo } from 'react';
-import {
-  FrameBox,
-  FrameContent,
-  StyledContent,
-} from '@/layouts/FrameLayout/style';
+import { FrameBox, FrameContentLayout } from '@/layouts/FrameLayout/style';
 import Header from '@/layouts/FrameLayout/header';
 import Sider from '@/layouts/FrameLayout/sider';
+import FrameContent from '@/layouts/FrameLayout/content';
 
 const FrameLayout: FC = ({ children }) => {
   return (
     <FrameBox>
       <Header />
-      <FrameContent>
+      <FrameContentLayout>
         <Sider />
-        <StyledContent>{children}</StyledContent>
-      </FrameContent>
+        <FrameContent>{children}</FrameContent>
+      </FrameContentLayout>
     </FrameBox>
   );
 };

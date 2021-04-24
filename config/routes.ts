@@ -27,7 +27,7 @@ const routes: Route[] = [
       { redirect: '/frame', path: '/' },
       {
         path: '/frame',
-        component: '@/layouts/frameLayout',
+        component: '@/layouts/FrameLayout',
         // wrappers: ['@/wrappers/verifyAccount.tsx'],
         routes: [
           { redirect: '/frame/home', path: '/frame' },
@@ -42,6 +42,17 @@ const routes: Route[] = [
           {
             path: '/frame/categories',
             component: '@/pages/categories',
+          },
+        ],
+      },
+      {
+        path: '/entrance',
+        component: '@/layouts/EntranceLayout',
+        routes: [
+          { redirect: '/entrance/login', path: '/entrance' },
+          {
+            path: '/entrance/login',
+            component: '@/pages/entrance/login',
           },
         ],
       },

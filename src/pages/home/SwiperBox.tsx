@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, memo } from 'react';
 import { StyledSwiperBox } from '@/pages/home/style';
 import Swiper from 'swiper';
 import SwiperCore, { Navigation, Pagination, Autoplay } from 'swiper';
@@ -77,4 +77,4 @@ const SwiperBox: FC = () => {
     </StyledSwiperBox>
   );
 };
-export default SwiperBox;
+export default memo(SwiperBox);

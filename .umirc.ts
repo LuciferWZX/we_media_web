@@ -13,6 +13,10 @@ export default defineConfig({
     antd: true,
   },
   theme: antdTheme,
+  hash: true,
+  history: {
+    type: 'hash',
+  },
   dva: {
     immer: true,
     hmr: false,

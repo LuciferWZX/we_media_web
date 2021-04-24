@@ -10,7 +10,12 @@ const Sider: FC = () => {
     (left, right) => left.leftSiderScroll === right.leftSiderScroll,
   );
   return (
-    <StyledSider isScroll={leftSiderScroll}>
+    <StyledSider
+      trigger={null}
+      collapsible
+      collapsed={leftSiderScroll}
+      collapsedWidth={0}
+    >
       <MenuCard />
     </StyledSider>
   );

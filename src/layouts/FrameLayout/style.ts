@@ -1,20 +1,18 @@
 import styled from 'styled-components';
-export const FrameBox = styled.div`
+import { Layout } from 'antd';
+const { Header, Content } = Layout;
+export const FrameBox = styled(Layout)`
   height: 100vh;
 `;
-export const FrameContent = styled.div`
-  display: flex;
-  height: calc(100vh - 65px);
-`;
-export const FrameHeader = styled.header`
-  position: -webkit-sticky;
-  position: sticky;
-  top: 0;
+export const FrameContentLayout = styled(Layout)``;
+export const FrameHeader = styled(Header)`
   background-color: white;
   box-shadow: 0 0.052083333in 11.25pt -5.25pt rgb(0 0 0 / 10%);
   height: 4.0625pc;
   display: flex;
   align-items: center;
+  z-index: 1;
+  padding: 0;
   //padding:.364583333in;
 `;
 export const HeaderLogo = styled.div`
@@ -64,9 +62,8 @@ export const SearchComponent = styled.div`
     }
   }
 `;
-export const StyledContent = styled.div`
+export const StyledContent = styled(Content)`
   flex: 1;
-  height: calc(100vh - 4.0625pc);
   overflow: auto;
   display: flex;
   justify-content: center;
