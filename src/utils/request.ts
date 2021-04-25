@@ -36,7 +36,7 @@ const request = extend({
   prefix: '/api/',
   errorHandler: errorHandler,
   credentials: 'omit',
-  timeout: 50000,
+  timeout: 5000,
 });
 /**
  * todo

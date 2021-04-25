@@ -1,11 +1,16 @@
 import React, { FC } from 'react';
+import { history } from 'umi';
 import {
   StyledFormBox,
   StyledLogin,
   StyledTopBox,
 } from '@/pages/entrance/login/style';
-import { AutoComplete, Button, Checkbox, Form, Input } from 'antd';
-import { useReactive } from 'ahooks';
+import { AutoComplete, Button, Checkbox, Form, Input, message } from 'antd';
+import { useLockFn, useReactive, useRequest } from 'ahooks';
+import { useDispatch } from '@@/plugin-dva/exports';
+import { LoginParams } from '@/services/type';
+import { CodeStatus, ResType } from '@/utils/types/url';
+import { User } from '@/utils/types/user';
 interface FormProps {
   email: string;
   password: string;
@@ -16,10 +21,26 @@ interface IState {
 }
 
 const Login: FC = () => {
+  const dispatch = useDispatch();
   const [form] = Form.useForm<FormProps>();
+  /**
+   * @todo 本页面的状态
+   */
   const state = useReactive<IState>({
     autoEmail: [],
   });
+  /**
+   * @todo 登录请求
+   */
+  const loginRequest = useRequest(
+    (params: LoginParams) => {
+      return dispatch({
+        type: 'user/login',
+        payload: params,
+      });
+    },
+    { manual: true },
+  );
   /**
    * @todo 自动匹配某些邮箱
    * @param value
@@ -47,9 +68,20 @@ const Login: FC = () => {
     });
   };
 
-  const onFinish = (values: FormProps) => {
+  const onFinish = useLockFn(async (values: FormProps) => {
     console.log('提交了代码：', values);
-  };
+    const res: ResType<User> = await loginRequest.run({
+      email: values.email,
+      password: values.password,
+    });
+    if (res.code === CodeStatus.succeed) {
+      message.success('登录成功');
+      history.push('/');
+    } else {
+      message.error(res.message);
+    }
+    console.log(res);
+  });
   return (
     <StyledLogin>
       <StyledTopBox>
@@ -102,7 +134,11 @@ const Login: FC = () => {
               <div>
                 还没有账号？<span className={'go-register'}>注册</span>
               </div>
-              <Button htmlType={'submit'} type={'primary'}>
+              <Button
+                loading={loginRequest.loading}
+                htmlType={'submit'}
+                type={'primary'}
+              >
                 进入社区
               </Button>
             </div>

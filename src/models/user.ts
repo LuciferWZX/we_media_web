@@ -1,5 +1,8 @@
-import { ImmerReducer } from 'umi';
+import { ImmerReducer, Effect } from 'umi';
 import { User } from '@/utils/types/user';
+import { LoginParams } from '@/services/type';
+import { login } from '@/services/user';
+import { ErrorResData, ResType } from '@/utils/types/url';
 
 export interface UserModelState {
   user: User | null;
@@ -7,7 +10,9 @@ export interface UserModelState {
 interface UserModelType {
   namespace: 'user';
   state: UserModelState;
-  effects: {};
+  effects: {
+    login: Effect;
+  };
   reducers: {
     save: ImmerReducer<UserModelState>;
   };
@@ -17,7 +22,11 @@ const userModel: UserModelType = {
   state: {
     user: null,
   },
-  effects: {},
+  effects: {
+    *login({ payload }, { call }) {
+      return yield call(login, payload as LoginParams);
+    },
+  },
   reducers: {
     /**
      * todo
