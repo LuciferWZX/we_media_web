@@ -5,20 +5,25 @@ import FeaturedVideos from '@/pages/home/featuredVideos';
 import { Divider } from 'antd';
 import SubscriptionVideos from '@/pages/home/subscriptionVideos';
 import FindChannel from '@/pages/home/findChannel';
-import { useMount } from 'ahooks';
+import { useMount, useUnmount } from 'ahooks';
 
 const HomePage: FC = () => {
   useMount(() => {
     //NProgress.start();
+    executeAnimation();
   });
+  useUnmount(() => {});
+
+  const executeAnimation = (): void => {};
+
   return (
     <StyledHome>
-      <SwiperBox />
-      <FeaturedVideos />
-      <Divider type={'horizontal'} />
-      <SubscriptionVideos />
-      <Divider type={'horizontal'} />
-      <FindChannel />
+      <SwiperBox className={'home-element'} />
+      <FeaturedVideos className={'home-element'} />
+      <Divider type={'horizontal'} className={'home-element'} />
+      <SubscriptionVideos className={'home-element'} />
+      <Divider type={'horizontal'} className={'home-element'} />
+      <FindChannel className={'home-element'} />
     </StyledHome>
   );
 };

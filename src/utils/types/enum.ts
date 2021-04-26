@@ -19,3 +19,7 @@ export enum ResponseStatus {
   //请求超时
   Timeout = 504,
 }
+export enum StoreKey {
+  autoLogin = 'autoLogin', //自动登录
+  token = 'token', //用户token
+}

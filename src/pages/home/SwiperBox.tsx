@@ -5,9 +5,13 @@ import SwiperCore, { Navigation, Pagination, Autoplay } from 'swiper';
 import 'swiper/swiper-bundle.min.css';
 import { useMount } from 'ahooks';
 import { IconFont } from '@/components';
+
 SwiperCore.use([Navigation, Pagination, Autoplay]);
-const SwiperBox: FC = () => {
-  console.log(11);
+
+interface IProps {
+  className?: string;
+}
+const SwiperBox: FC<IProps> = ({ className }) => {
   useMount(() => {
     new Swiper('.swiper-container', {
       direction: 'horizontal',
@@ -32,7 +36,7 @@ const SwiperBox: FC = () => {
     });
   });
   return (
-    <StyledSwiperBox>
+    <StyledSwiperBox className={className}>
       <div className={'swiper-container'}>
         <div className="swiper-wrapper">
           <div className="swiper-slide">

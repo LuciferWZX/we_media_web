@@ -10,7 +10,10 @@ import { Space } from 'antd';
 interface IState {
   videoDropDownMenu: VideoDropDownMenu[];
 }
-const FindChannel: FC = () => {
+interface IProps {
+  className?: string;
+}
+const FindChannel: FC<IProps> = ({ className }) => {
   /*@todo 内部状态 */
   const state = useReactive<IState>({
     videoDropDownMenu: [],
@@ -50,7 +53,7 @@ const FindChannel: FC = () => {
     />
   );
   return (
-    <StyledFindChannel>
+    <StyledFindChannel className={className}>
       <HomeCard
         className={'videos-card'}
         containerClassName={'videos-card-container'}

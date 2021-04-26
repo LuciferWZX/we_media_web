@@ -7,10 +7,14 @@ import { VideoAction } from '@/utils/types/enum';
 import Swiper from 'swiper';
 import 'swiper/swiper-bundle.min.css';
 import { StyledSubscriptionVideo } from './style';
+
+interface IProps {
+  className?: string;
+}
 interface IState {
   videoDropDownMenu: VideoDropDownMenu[];
 }
-const SubscriptionVideos: FC = () => {
+const SubscriptionVideos: FC<IProps> = ({ className }) => {
   /*@todo 内部状态 */
   const state = useReactive<IState>({
     videoDropDownMenu: [],
@@ -71,7 +75,7 @@ const SubscriptionVideos: FC = () => {
     />
   );
   return (
-    <StyledSubscriptionVideo>
+    <StyledSubscriptionVideo className={className}>
       <HomeCard
         className={'videos-card'}
         containerClassName={'videos-card-container'}

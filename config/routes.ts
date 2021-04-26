@@ -23,6 +23,7 @@ const routes: Route[] = [
   {
     path: '/',
     component: '@/layouts',
+    wrappers: ['@/wrappers/app'],
     routes: [
       { redirect: '/frame', path: '/' },
       {

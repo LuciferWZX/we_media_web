@@ -14,5 +14,5 @@ export interface ErrorResData {
   url: string;
 }
 export enum CodeStatus {
-  succeed = 200,
+  succeed = 0,
 }

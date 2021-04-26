@@ -11,6 +11,9 @@ import { useDispatch } from '@@/plugin-dva/exports';
 import { LoginParams } from '@/services/type';
 import { CodeStatus, ResType } from '@/utils/types/url';
 import { User } from '@/utils/types/user';
+import { useModel } from '@@/plugin-model/useModel';
+import store from 'storejs';
+import { StoreKey } from '@/utils/types/enum';
 interface FormProps {
   email: string;
   password: string;
@@ -23,6 +26,9 @@ interface IState {
 const Login: FC = () => {
   const dispatch = useDispatch();
   const [form] = Form.useForm<FormProps>();
+  const { setUser } = useModel('@@initialState', (model) => ({
+    setUser: model.setInitialState,
+  }));
   /**
    * @todo 本页面的状态
    */
@@ -32,7 +38,7 @@ const Login: FC = () => {
   /**
    * @todo 登录请求
    */
-  const loginRequest = useRequest(
+  const { run: loginRun, loading: loginLoading } = useRequest(
     (params: LoginParams) => {
       return dispatch({
         type: 'user/login',
@@ -50,7 +56,7 @@ const Login: FC = () => {
     if (!value || value.indexOf('@') >= 0) {
       res = [];
     } else {
-      res = ['gmail.com', '163.com', 'qq.com'].map(
+      res = ['qq.com', 'gmail.com', '163.com'].map(
         (domain) => `${value}@${domain}`,
       );
     }
@@ -70,16 +76,20 @@ const Login: FC = () => {
 
   const onFinish = useLockFn(async (values: FormProps) => {
     console.log('提交了代码：', values);
-    const res: ResType<User> = await loginRequest.run({
+    const res: ResType<User> = await loginRun({
       email: values.email,
       password: values.password,
     });
+
     if (res.code === CodeStatus.succeed) {
+      setUser(res.data);
       message.success('登录成功');
+      store.set(StoreKey.token, res.data.token);
       history.push('/');
     } else {
       message.error(res.message);
     }
+
     console.log(res);
   });
   return (
@@ -135,7 +145,7 @@ const Login: FC = () => {
                 还没有账号？<span className={'go-register'}>注册</span>
               </div>
               <Button
-                loading={loginRequest.loading}
+                loading={loginLoading}
                 htmlType={'submit'}
                 type={'primary'}
               >

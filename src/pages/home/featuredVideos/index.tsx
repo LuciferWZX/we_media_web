@@ -11,7 +11,10 @@ import { Space } from 'antd';
 interface IState {
   videoDropDownMenu: VideoDropDownMenu[];
 }
-const FeaturedVideos: FC = () => {
+interface IProps {
+  className?: string;
+}
+const FeaturedVideos: FC<IProps> = ({ className }) => {
   /*@todo 内部状态 */
   const state = useReactive<IState>({
     videoDropDownMenu: [],
@@ -23,6 +26,12 @@ const FeaturedVideos: FC = () => {
       { key: VideoAction.collect, label: '收藏', icon: 'icon-shoucang' },
       { key: VideoAction.share, label: '分享', icon: 'icon-fenxiang' },
     ];
+    initSwiper();
+  });
+  /**
+   * @todo 初始化Swiper
+   */
+  const initSwiper = (): void => {
     new Swiper('.swiper-container-featured-videos', {
       direction: 'horizontal',
       loop: false,
@@ -36,7 +45,7 @@ const FeaturedVideos: FC = () => {
         prevEl: '.swiper-button-prev-feature-video',
       },
     });
-  });
+  };
   /**
    * @todo video点击下拉菜单
    * @param info
@@ -76,7 +85,7 @@ const FeaturedVideos: FC = () => {
     />
   );
   return (
-    <StyledFeaturedVideo>
+    <StyledFeaturedVideo className={className}>
       <HomeCard
         className={'videos-card'}
         containerClassName={'videos-card-container'}
