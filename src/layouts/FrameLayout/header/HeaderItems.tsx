@@ -1,11 +1,29 @@
 import React, { FC } from 'react';
-import { HeaderItems } from '@/layouts/FrameLayout/style';
+import { HeaderItems, LiItem } from '@/layouts/FrameLayout/style';
 import { IconFont } from '@/components';
 import { Avatar, Badge, Button } from 'antd';
 import { history } from 'umi';
 import { useModel } from '@@/plugin-model/useModel';
 import { Pathname } from '@/utils/types/enum';
 const HeaderItemsBox: FC = () => {
+  const container = {
+    hidden: { opacity: 1, scale: 0 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: {
+        delayChildren: 0.3,
+        staggerChildren: 0.1,
+      },
+    },
+  };
+  const item = {
+    hidden: { x: 10, opacity: 0 },
+    visible: {
+      x: 0,
+      opacity: 1,
+    },
+  };
   const { user } = useModel('@@initialState', (model) => ({
     user: model.initialState,
   }));
@@ -15,8 +33,8 @@ const HeaderItemsBox: FC = () => {
   };
   if (user) {
     return (
-      <HeaderItems>
-        <li>
+      <HeaderItems variants={container} initial="hidden" animate="visible">
+        <LiItem variants={item}>
           <Button
             className={'upload-btn'}
             shape="round"
@@ -26,24 +44,24 @@ const HeaderItemsBox: FC = () => {
           >
             上传
           </Button>
-        </li>
-        <li>
+        </LiItem>
+        <LiItem variants={item}>
           <IconFont type={'icon-dingyue'} />
-        </li>
-        <li>
+        </LiItem>
+        <LiItem variants={item}>
           <IconFont type={'icon-icon-test'} />
-        </li>
-        <li>
+        </LiItem>
+        <LiItem variants={item}>
           <Badge count={5}>
             <IconFont type={'icon-xiaoxi'} />
           </Badge>
-        </li>
-        <li>
+        </LiItem>
+        <LiItem variants={item}>
           <Badge count={15}>
             <IconFont type={'icon-tongzhi'} />
           </Badge>
-        </li>
-        <li>
+        </LiItem>
+        <LiItem variants={item}>
           <Avatar
             style={{ backgroundColor: 'orange', verticalAlign: 'middle' }}
             size={32}
@@ -53,7 +71,7 @@ const HeaderItemsBox: FC = () => {
           >
             user
           </Avatar>
-        </li>
+        </LiItem>
       </HeaderItems>
     );
   }

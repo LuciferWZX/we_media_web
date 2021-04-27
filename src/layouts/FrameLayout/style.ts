@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { Layout } from 'antd';
 const { Header, Content } = Layout;
+import { motion } from 'framer-motion';
 export const FrameBox = styled(Layout)`
   height: 100vh;
 `;
@@ -27,7 +28,7 @@ export const HeaderLogo = styled.div`
     }
   }
 `;
-export const HeaderItems = styled.ul`
+export const HeaderItems = styled(motion.ul)`
   display: flex;
   li {
     .anticon {
@@ -48,6 +49,10 @@ export const HeaderItems = styled.ul`
     margin-right: 20px;
   }
 `;
+export const LiItem = styled(motion.li)`
+  display: flex;
+  align-items: center;
+`;
 export const SearchComponent = styled.div`
   flex: 1;
   .search-input {
@@ -65,6 +70,7 @@ export const SearchComponent = styled.div`
 export const StyledContent = styled(Content)`
   flex: 1;
   overflow: auto;
+  overflow-x: hidden;
   display: flex;
   justify-content: center;
 `;

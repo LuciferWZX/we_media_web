@@ -5,11 +5,13 @@ import SwiperCore, { Navigation, Pagination, Autoplay } from 'swiper';
 import 'swiper/swiper-bundle.min.css';
 import { useMount } from 'ahooks';
 import { IconFont } from '@/components';
+import { Variants } from 'framer-motion/types/types';
 
 SwiperCore.use([Navigation, Pagination, Autoplay]);
 
 interface IProps {
   className?: string;
+  variants?: Variants;
 }
 const SwiperBox: FC<IProps> = ({ className }) => {
   useMount(() => {

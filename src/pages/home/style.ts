@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-
-export const StyledHome = styled.div`
+import { motion } from 'framer-motion';
+export const StyledHome = styled(motion.div)`
   @media screen and (min-width: 1650px) {
     max-width: 81.25pc;
   }
@@ -65,7 +65,7 @@ export const StyledHome = styled.div`
     }
   }
 `;
-export const StyledSwiperBox = styled.div`
+export const StyledSwiperBox = styled(motion.div)`
   padding: 20px 20px 0 20px;
   .swiper-container {
     background-color: rgba(0, 0, 0, 0.2);

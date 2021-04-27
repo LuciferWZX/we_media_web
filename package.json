@@ -25,6 +25,7 @@
     "ahooks": "2.10.1",
     "antd": "4.15.1",
     "dayjs": "^1.10.4",
+    "framer-motion": "^4.1.10",
     "nprogress": "^0.2.0",
     "storejs": "^1.1.0",
     "styled-components": "5.2.3",

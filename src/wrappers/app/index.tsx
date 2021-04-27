@@ -1,21 +1,22 @@
 import React, { FC, Fragment, memo } from 'react';
 import { useModel } from '@@/plugin-model/useModel';
 import { useMount, useUpdateEffect } from 'ahooks';
-import { useDispatch } from '@@/plugin-dva/exports';
+import { useDispatch, useSelector } from '@@/plugin-dva/exports';
 import { StoreKey } from '@/utils/types/enum';
+import { ConnectState } from '@/models/connect';
 const AppWrapper: FC = ({ children }) => {
   const dispatch = useDispatch();
-  const { user } = useModel('@@initialState', (model) => ({
-    user: model.initialState,
+  //@todo 状态--------------------------------
+  const user = useSelector(
+    (state: ConnectState) => state.user.user,
+    (left, right) => left === right,
+  );
+  const { setUser } = useModel('@@initialState', (model) => ({
+    setUser: model.setInitialState,
   }));
+  //@todo 方法--------------------------------
   useUpdateEffect(() => {
-    console.log('更新');
-    dispatch({
-      type: 'user/save',
-      payload: {
-        user: user,
-      },
-    });
+    setUser(user);
   }, [user]);
   //@todo 一开始加载数据
   useMount(() => {
@@ -30,6 +31,9 @@ const AppWrapper: FC = ({ children }) => {
     if (token) {
       //token存在
       //@todo refreshToken
+      dispatch({
+        type: 'user/fetchUserInfo',
+      });
     }
   };
   return <Fragment>{children}</Fragment>;

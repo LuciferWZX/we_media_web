@@ -1,6 +1,6 @@
 import { extend, ResponseError } from 'umi-request';
-import { ResponseStatus } from '@/utils/types/enum';
-
+import { ResponseStatus, StoreKey } from '@/utils/types/enum';
+import store from 'storejs';
 /**
  * todo
  * 拦截返回的错误处理
@@ -44,15 +44,24 @@ const request = extend({
  */
 request.interceptors.request.use((url, options): any => {
   //console.log('请求request:', { url, options });
-  // const account: Account = store.get('account');
-  // let token = '';
-  // if (account) {
-  //   token = account.token;
-  // }
-  // options.headers = {
-  //   ...options.headers,
-  //   token: token,
-  // };
+
+  const token: string | undefined = store.get(StoreKey.token);
+  let config: any = {
+    ...options.headers,
+  };
+  if (token) {
+    config.token = token;
+  }
+  options.headers = {
+    'Content-Type': 'application/json',
+    'If-Modified-Since': 0,
+    Accept: 'application/json',
+    ...config,
+  };
+  return {
+    url: url,
+    options: options,
+  };
 });
 /**
  * todo

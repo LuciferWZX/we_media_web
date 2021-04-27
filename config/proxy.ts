@@ -4,7 +4,7 @@ export default {
     '/api/': {
       target: `${DEV_ADDRESS}`,
       changeOrigin: true,
-      //pathRewrite: { '^/api/': '/api/' },
+      pathRewrite: { '^/api/': '/api/' },
     },
   },
 };
