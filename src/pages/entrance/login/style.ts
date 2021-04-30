@@ -1,6 +1,31 @@
 import styled from 'styled-components';
-export const StyledLogin = styled.div`
+import { motion } from 'framer-motion';
+export const StyledLogin = styled(motion.div)`
   padding: 37.5px;
+  position: relative;
+  .developer-find-btn {
+    position: absolute;
+    right: 20px;
+  }
+`;
+export const DeveloperDesc = styled.div`
+  width: 200px;
+  .ant-progress-text {
+    color: gray;
+  }
+`;
+export const DragDevelopBox = styled(motion.div)`
+  cursor: pointer;
+  position: absolute;
+  font-size: 40px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(80deg, #ff9500 0, #ff6200 100%);
+  height: 50px;
+  width: 50px;
+  z-index: 9999;
 `;
 export const StyledTopBox = styled.div`
   text-align: center;

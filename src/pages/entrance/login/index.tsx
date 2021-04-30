@@ -1,11 +1,22 @@
-import React, { FC } from 'react';
+import React, { FC, useRef } from 'react';
 import { history } from 'umi';
 import {
+  DeveloperDesc,
+  DragDevelopBox,
   StyledFormBox,
   StyledLogin,
   StyledTopBox,
 } from '@/pages/entrance/login/style';
-import { AutoComplete, Button, Checkbox, Form, Input, message } from 'antd';
+import {
+  AutoComplete,
+  Button,
+  Checkbox,
+  Form,
+  Input,
+  message,
+  Progress,
+  Tooltip,
+} from 'antd';
 import { useLockFn, useReactive, useRequest } from 'ahooks';
 import { useDispatch } from '@@/plugin-dva/exports';
 import { LoginParams } from '@/services/type';
@@ -14,6 +25,7 @@ import { User } from '@/utils/types/user';
 import { useModel } from '@@/plugin-model/useModel';
 import store from 'storejs';
 import { StoreKey } from '@/utils/types/enum';
+import { IconFont } from '@/components';
 interface FormProps {
   email: string;
   password: string;
@@ -25,6 +37,8 @@ interface IState {
 
 const Login: FC = () => {
   const dispatch = useDispatch();
+  const constraintsRef = useRef(null);
+  const dragRef = useRef(null);
   const [form] = Form.useForm<FormProps>();
   const { setUser } = useModel('@@initialState', (model) => ({
     setUser: model.setInitialState,
@@ -92,8 +106,28 @@ const Login: FC = () => {
 
     console.log(res);
   });
+  const developDesc = (
+    <DeveloperDesc>
+      <div>开发者: wuzhixin</div>
+      <div>
+        开发状态: <Progress percent={30} steps={10} />
+      </div>
+      <div>联系方式: 微信 wzx715715</div>
+      <div>邮箱:2396423791@qq.com</div>
+    </DeveloperDesc>
+  );
   return (
-    <StyledLogin>
+    <StyledLogin ref={constraintsRef}>
+      <DragDevelopBox drag dragConstraints={constraintsRef}>
+        <Tooltip
+          color={'black'}
+          title={developDesc}
+          getTooltipContainer={(triggerNode) => triggerNode}
+        >
+          <IconFont type={'icon-kefu'} />
+        </Tooltip>
+      </DragDevelopBox>
+
       <StyledTopBox>
         <h2 className={'welcome-back'}>欢迎回来</h2>
         <p className={'login-desc'}>登录管理您的帐户。</p>
