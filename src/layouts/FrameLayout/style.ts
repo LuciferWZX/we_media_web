@@ -49,6 +49,15 @@ export const HeaderItems = styled(motion.ul)`
     margin-right: 20px;
   }
 `;
+export const UploadPopoverContent = styled.div`
+  width: 340px;
+`;
+export const UploadPopoverTitle = styled.div`
+  padding: 7px 4px;
+  color: #666;
+  font-size: 0.9375pc;
+  font-weight: 600;
+`;
 export const LiItem = styled(motion.li)`
   display: flex;
   align-items: center;

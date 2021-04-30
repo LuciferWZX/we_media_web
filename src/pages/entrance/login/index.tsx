@@ -17,7 +17,7 @@ import {
   Progress,
   Tooltip,
 } from 'antd';
-import { useLockFn, useReactive, useRequest } from 'ahooks';
+import { useLockFn, usePersistFn, useReactive, useRequest } from 'ahooks';
 import { useDispatch } from '@@/plugin-dva/exports';
 import { LoginParams } from '@/services/type';
 import { CodeStatus, ResType } from '@/utils/types/url';
@@ -38,7 +38,6 @@ interface IState {
 const Login: FC = () => {
   const dispatch = useDispatch();
   const constraintsRef = useRef(null);
-  const dragRef = useRef(null);
   const [form] = Form.useForm<FormProps>();
   const { setUser } = useModel('@@initialState', (model) => ({
     setUser: model.setInitialState,
@@ -65,7 +64,7 @@ const Login: FC = () => {
    * @todo 自动匹配某些邮箱
    * @param value
    */
-  const handleSearch = (value: string) => {
+  const handleSearch = usePersistFn((value: string) => {
     let res: string[];
     if (!value || value.indexOf('@') >= 0) {
       res = [];
@@ -75,18 +74,20 @@ const Login: FC = () => {
       );
     }
     state.autoEmail = res;
-  };
+  });
   /**
    * @todo 渲染邮箱的下拉框
    */
-  const renderAutoEmail = (): Array<{ label: string; value: string }> => {
-    return state.autoEmail.map((email) => {
-      return {
-        value: email,
-        label: email,
-      };
-    });
-  };
+  const renderAutoEmail = usePersistFn(
+    (): Array<{ label: string; value: string }> => {
+      return state.autoEmail.map((email) => {
+        return {
+          value: email,
+          label: email,
+        };
+      });
+    },
+  );
 
   const onFinish = useLockFn(async (values: FormProps) => {
     console.log('提交了代码：', values);

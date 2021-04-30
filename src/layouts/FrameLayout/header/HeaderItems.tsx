@@ -1,7 +1,12 @@
 import React, { FC } from 'react';
-import { HeaderItems, LiItem } from '@/layouts/FrameLayout/style';
+import {
+  HeaderItems,
+  LiItem,
+  UploadPopoverContent,
+  UploadPopoverTitle,
+} from '@/layouts/FrameLayout/style';
 import { IconFont } from '@/components';
-import { Avatar, Badge, Button } from 'antd';
+import { Avatar, Badge, Button, Popover } from 'antd';
 import { history } from 'umi';
 import { useModel } from '@@/plugin-model/useModel';
 import { Pathname } from '@/utils/types/enum';
@@ -35,15 +40,21 @@ const HeaderItemsBox: FC = () => {
     return (
       <HeaderItems variants={container} initial="hidden" animate="visible">
         <LiItem variants={item}>
-          <Button
-            className={'upload-btn'}
-            shape="round"
-            icon={
-              <IconFont style={{ fontSize: 16 }} type={'icon-shangchuan1'} />
-            }
+          <Popover
+            content={<UploadPopoverContent>这是内容</UploadPopoverContent>}
+            title={<UploadPopoverTitle>上传视频</UploadPopoverTitle>}
+            trigger="click"
           >
-            上传
-          </Button>
+            <Button
+              className={'upload-btn'}
+              shape="round"
+              icon={
+                <IconFont style={{ fontSize: 16 }} type={'icon-shangchuan1'} />
+              }
+            >
+              上传
+            </Button>
+          </Popover>
         </LiItem>
         <LiItem variants={item}>
           <IconFont type={'icon-dingyue'} />

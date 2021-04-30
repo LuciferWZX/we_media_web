@@ -4,7 +4,7 @@ import { LoginParams } from '@/services/type';
 import { fetchUserInfo, login } from '@/services/user';
 import { CodeStatus, ResType } from '@/utils/types/url';
 import { message } from 'antd';
-
+import NProgress from 'nprogress';
 export interface UserModelState {
   user: User | null;
 }
@@ -29,6 +29,7 @@ const userModel: UserModelType = {
       return yield call(login, payload as LoginParams);
     },
     *fetchUserInfo(_, { call, put }) {
+      NProgress.start();
       const res: ResType<User> = yield call(fetchUserInfo);
       try {
         if (res.code === CodeStatus.succeed) {
@@ -43,6 +44,8 @@ const userModel: UserModelType = {
         }
       } catch (e) {
         console.error('fetchUserInfo');
+      } finally {
+        NProgress.done();
       }
     },
   },
