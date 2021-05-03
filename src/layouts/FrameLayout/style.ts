@@ -49,14 +49,33 @@ export const HeaderItems = styled(motion.ul)`
     margin-right: 20px;
   }
 `;
-export const UploadPopoverContent = styled.div`
-  width: 340px;
-`;
-export const UploadPopoverTitle = styled.div`
-  padding: 7px 4px;
-  color: #666;
-  font-size: 0.9375pc;
-  font-weight: 600;
+export const UploadVideoModalContent = styled.div`
+  .input-textarea {
+    .anticon {
+      font-size: 14px !important;
+    }
+  }
+
+  .upload-box {
+    text-align: center;
+    padding: 10px;
+    border: 1px dashed grey;
+    border-radius: 5px;
+    transition-property: border-color;
+    transition-duration: 0.2s;
+    :hover {
+      border-color: orange;
+    }
+    cursor: pointer;
+    .upload-icon {
+      font-size: 54px;
+    }
+    .desc-upload {
+      color: #666666;
+      font-size: 15px;
+      margin-top: 10px;
+    }
+  }
 `;
 export const LiItem = styled(motion.li)`
   display: flex;

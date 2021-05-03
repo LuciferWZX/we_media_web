@@ -1,15 +1,11 @@
 import React, { FC } from 'react';
-import {
-  HeaderItems,
-  LiItem,
-  UploadPopoverContent,
-  UploadPopoverTitle,
-} from '@/layouts/FrameLayout/style';
+import { HeaderItems, LiItem } from '@/layouts/FrameLayout/style';
 import { IconFont } from '@/components';
-import { Avatar, Badge, Button, Popover } from 'antd';
-import { history } from 'umi';
+import { Avatar, Badge, Button } from 'antd';
+import { history, useDispatch } from 'umi';
 import { useModel } from '@@/plugin-model/useModel';
 import { Pathname } from '@/utils/types/enum';
+import { usePersistFn } from 'ahooks';
 const HeaderItemsBox: FC = () => {
   const container = {
     hidden: { opacity: 1, scale: 0 },
@@ -29,6 +25,7 @@ const HeaderItemsBox: FC = () => {
       opacity: 1,
     },
   };
+  const dispatch = useDispatch();
   const { user } = useModel('@@initialState', (model) => ({
     user: model.initialState,
   }));
@@ -36,25 +33,29 @@ const HeaderItemsBox: FC = () => {
   const handleLogin = () => {
     history.push(Pathname.login);
   };
+  //@todo 打开上传视频的modal
+  const openUploadVisible = usePersistFn((): void => {
+    dispatch({
+      type: 'layout/save',
+      payload: {
+        uploadVideoVisible: true,
+      },
+    });
+  });
   if (user) {
     return (
       <HeaderItems variants={container} initial="hidden" animate="visible">
         <LiItem variants={item}>
-          <Popover
-            content={<UploadPopoverContent>这是内容</UploadPopoverContent>}
-            title={<UploadPopoverTitle>上传视频</UploadPopoverTitle>}
-            trigger="click"
+          <Button
+            className={'upload-btn'}
+            shape="round"
+            onClick={openUploadVisible}
+            icon={
+              <IconFont style={{ fontSize: 16 }} type={'icon-shangchuan1'} />
+            }
           >
-            <Button
-              className={'upload-btn'}
-              shape="round"
-              icon={
-                <IconFont style={{ fontSize: 16 }} type={'icon-shangchuan1'} />
-              }
-            >
-              上传
-            </Button>
-          </Popover>
+            上传
+          </Button>
         </LiItem>
         <LiItem variants={item}>
           <IconFont type={'icon-dingyue'} />

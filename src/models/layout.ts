@@ -3,6 +3,8 @@ import { ImmerReducer } from 'umi';
 export interface LayoutModelState {
   //左侧是否收起
   leftSiderScroll: boolean;
+  //上传视频的visible
+  uploadVideoVisible: boolean;
 }
 interface LayoutModelType {
   namespace: 'layout';
@@ -16,6 +18,7 @@ const layoutModel: LayoutModelType = {
   namespace: 'layout',
   state: {
     leftSiderScroll: false,
+    uploadVideoVisible: false,
   },
   effects: {},
   reducers: {
