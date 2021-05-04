@@ -159,7 +159,11 @@ const Login: FC = () => {
             ]}
           >
             <AutoComplete options={renderAutoEmail()} onSearch={handleSearch}>
-              <Input placeholder={'请输入邮箱'} allowClear={true} />
+              <Input
+                size={'large'}
+                placeholder={'请输入邮箱'}
+                allowClear={true}
+              />
             </AutoComplete>
           </Form.Item>
 
@@ -168,7 +172,12 @@ const Login: FC = () => {
             name="password"
             rules={[{ required: true, message: '请输入您的密码!' }]}
           >
-            <Input.Password placeholder={'请输入密码'} allowClear={true} />
+            <Input.Password
+              autoComplete={'new-password'}
+              size={'large'}
+              placeholder={'请输入密码'}
+              allowClear={true}
+            />
           </Form.Item>
 
           <Form.Item name="autoLogin" valuePropName="checked">
@@ -180,6 +189,7 @@ const Login: FC = () => {
                 还没有账号？<span className={'go-register'}>注册</span>
               </div>
               <Button
+                className={'login-btn'}
                 loading={loginLoading}
                 htmlType={'submit'}
                 type={'primary'}

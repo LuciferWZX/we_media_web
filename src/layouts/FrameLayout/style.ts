@@ -59,13 +59,9 @@ export const UploadVideoModalContent = styled.div`
   .upload-box {
     text-align: center;
     padding: 10px;
-    border: 1px dashed grey;
     border-radius: 5px;
-    transition-property: border-color;
     transition-duration: 0.2s;
-    :hover {
-      border-color: orange;
-    }
+
     cursor: pointer;
     .upload-icon {
       font-size: 54px;
@@ -101,4 +97,27 @@ export const StyledContent = styled(Content)`
   overflow-x: hidden;
   display: flex;
   justify-content: center;
+`;
+export const StyledUploadVideo = styled.div`
+  display: flex;
+  align-items: center;
+  text-align: left;
+  .uploading-text {
+    position: absolute;
+    right: 10px;
+    top: 0;
+    color: #2f3152;
+  }
+  .video-icon {
+    font-size: 55px;
+    margin-right: 20px;
+  }
+  .video-info {
+    flex: 1;
+  }
+`;
+export const StyledUploadActionButtons = styled.div`
+  position: absolute;
+  right: 0;
+  top: 0;
 `;

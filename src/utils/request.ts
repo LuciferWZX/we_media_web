@@ -21,10 +21,10 @@ const errorHandler = (err: ResponseError): Response => {
     case ResponseStatus.Unauthorized: {
       return data;
     }
-    case ResponseStatus.Timeout: {
+    case ResponseStatus.GatewayTimeout: {
       return {
         code: -1,
-        message: '连接超时',
+        message: '网关超时',
         data: null,
       } as any;
     }

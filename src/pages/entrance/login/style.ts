@@ -53,5 +53,17 @@ export const StyledFormBox = styled.div`
         color: #3e416d;
       }
     }
+    .login-btn {
+      background-color: #f89020;
+      border-color: #f89020;
+      font-size: 14px;
+      font-weight: 600;
+    }
+  }
+  .ant-form-item-label > label {
+    font-size: 17px;
+    margin-bottom: 5px;
+    display: block;
+    font-weight: 600;
   }
 `;

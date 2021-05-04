@@ -17,7 +17,7 @@ export enum ResponseStatus {
   //服务器出错
   ServerError = 500,
   //请求超时
-  Timeout = 504,
+  GatewayTimeout = 504,
 }
 export enum StoreKey {
   autoLogin = 'autoLogin', //自动登录
