@@ -1,8 +1,17 @@
 import React, { FC, memo } from 'react';
-import { Button, message, Modal, Popconfirm, Progress, Upload } from 'antd';
+import {
+  Alert,
+  Button,
+  message,
+  Modal,
+  Popconfirm,
+  Progress,
+  Space,
+  Upload,
+} from 'antd';
 import { useDispatch, useSelector } from '@@/plugin-dva/exports';
 import { ConnectState } from '@/models/connect';
-import { useReactive, useUpdateEffect } from 'ahooks';
+import { useReactive, useRequest, useUpdateEffect } from 'ahooks';
 import { IconFont } from '@/components';
 import {
   StyledUploadActionButtons,
@@ -29,6 +38,10 @@ interface IState {
   uploadVideo: UploadFile | null;
   //uploadedFile
   processingVideo: ProcessingVideo | null;
+  //是否恢复
+  isRecover: boolean;
+  //是否显示alert框
+  showAlert: boolean;
 }
 const UploadVideoModal: FC = () => {
   //@todo ----state--------------------
@@ -39,10 +52,38 @@ const UploadVideoModal: FC = () => {
   const state = useReactive<IState>({
     uploadVideo: null,
     processingVideo: null,
+    isRecover: false,
+    showAlert: false,
   });
+  //@todo visible
   const visible = useSelector(
     (state: ConnectState) => state.layout.uploadVideoVisible,
     (left, right) => left === right,
+  );
+  //@todo 查询到的未完成的video
+  const remoteProcessingVideo = useSelector(
+    (state: ConnectState) => state.layout.processingVideo,
+    (left, right) => left === right,
+  );
+  //@todo 获取未完成的video
+  const queryProcessingVideoRequest = useRequest(
+    (params: { id: string }) => {
+      return dispatch({
+        type: 'layout/queryProcessingVideo',
+        payload: params,
+      });
+    },
+    { manual: true },
+  );
+  //@todo 删除未完成的video
+  const abortProcessingVideoRequest = useRequest(
+    (params: { userId: string; videoTitle: string }) => {
+      return dispatch({
+        type: 'layout/abortProcessingVideo',
+        payload: params,
+      });
+    },
+    { manual: true },
   );
   //@todo ----state-end--------------------
   //@todo ----监听--------------------------
@@ -53,10 +94,67 @@ const UploadVideoModal: FC = () => {
         percent: state.uploadVideo.percent,
         status: state.uploadVideo.status,
       };
+      if (state.showAlert) {
+        state.showAlert = false;
+      }
     }
   }, [state.uploadVideo]);
+  useUpdateEffect(() => {
+    if (visible && userId) {
+      queryProcessingVideoRequest.run({ id: userId }).then();
+    }
+  }, [visible]);
+  useUpdateEffect(() => {
+    state.showAlert = !!remoteProcessingVideo;
+  }, [remoteProcessingVideo]);
+  useUpdateEffect(() => {
+    if (state.isRecover && remoteProcessingVideo) {
+      state.processingVideo = {
+        name: remoteProcessingVideo.videoTitle,
+        percent: 100,
+        status: 'done',
+      };
+    }
+  }, [state.isRecover]);
+
   //@todo ----监听end--------------------------
   //@todo ----function---------------------
+  /**
+   * @todo 恢复之前的编辑状态
+   */
+  const continueEdit = (): void => {
+    state.isRecover = true;
+    state.showAlert = false;
+  };
+  /**
+   * @todo 完全关闭之后
+   */
+  const afterClose = () => {
+    dispatch({
+      type: 'layout',
+      payload: {
+        processingVideo: null,
+      },
+    });
+    state.uploadVideo = null;
+    state.processingVideo = null;
+    state.isRecover = false;
+    state.showAlert = false;
+  };
+  /**
+   * @todo 删除之前的数据
+   */
+  const deleteOldVideo = (): void => {
+    if (userId && remoteProcessingVideo) {
+      abortProcessingVideoRequest
+        .run({ userId: userId, videoTitle: remoteProcessingVideo.videoTitle })
+        .then((response: 'success' | 'failed') => {
+          if (response === 'success') {
+            state.showAlert = false;
+          }
+        });
+    }
+  };
   const deleteVideo = (): void => {
     state.uploadVideo = null;
     state.processingVideo = null;
@@ -64,7 +162,6 @@ const UploadVideoModal: FC = () => {
   const renderUploadVideo = (): React.ReactNode => {
     if (state.processingVideo) {
       const { name, percent, status } = state.processingVideo;
-
       return (
         <StyledUploadVideo>
           {status === 'uploading' && (
@@ -92,7 +189,7 @@ const UploadVideoModal: FC = () => {
             <div>{name}</div>
             <div>
               <Progress
-                percent={percent}
+                percent={Number(percent?.toFixed(2))}
                 status={renderUploadProcessBarStatus(status)}
               />
             </div>
@@ -137,7 +234,9 @@ const UploadVideoModal: FC = () => {
       width={700}
       transitionName={'ant-fade'}
       okText={'上传'}
+      afterClose={afterClose}
       cancelText={'保存模版'}
+      destroyOnClose={true}
       okButtonProps={{
         style: {
           color: '#f98f1d',
@@ -157,6 +256,30 @@ const UploadVideoModal: FC = () => {
       onCancel={handleCancel}
     >
       <UploadVideoModalContent>
+        {state.showAlert && (
+          <Alert
+            style={{ marginBottom: 10 }}
+            message="有上次未提交的稿件信息，是否继续？"
+            //description="Info Description Info Description Info Description Info Description"
+            type="info"
+            action={
+              <Space direction="horizontal">
+                <Button onClick={continueEdit} size="small" type="primary">
+                  继续
+                </Button>
+                <Button
+                  loading={abortProcessingVideoRequest.loading}
+                  onClick={deleteOldVideo}
+                  size="small"
+                  danger
+                  type="ghost"
+                >
+                  不用了
+                </Button>
+              </Space>
+            }
+          />
+        )}
         <Dragger
           style={{ padding: '0 20px', position: 'relative' }}
           name={'videoFile'}

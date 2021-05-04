@@ -1,6 +1,8 @@
 export enum Url {
   login = 'account/login',
   fetch_account_info = 'account/fetch_account_info',
+  get_uploading_video = 'video/getUploadingVideo',
+  abort_processing_video = 'video/abortProcessingVideo',
 }
 export enum RequestMethod {
   POST = 'POST',
