@@ -55,13 +55,11 @@ export const UploadVideoModalContent = styled.div`
       font-size: 14px !important;
     }
   }
-
   .upload-box {
     text-align: center;
-    padding: 10px;
+
     border-radius: 5px;
     transition-duration: 0.2s;
-
     cursor: pointer;
     .upload-icon {
       font-size: 54px;
@@ -71,6 +69,21 @@ export const UploadVideoModalContent = styled.div`
       font-size: 15px;
       margin-top: 10px;
     }
+    .upload-help {
+      color: rgba(0, 0, 0, 0.45);
+      font-size: 14px;
+    }
+  }
+`;
+export const StyledSubarea = styled.div`
+  .subarea-label {
+    margin-right: 20px;
+    font-size: 14px;
+    color: #212121;
+  }
+  .subarea-desc {
+    font-size: 12px;
+    color: #999;
   }
 `;
 export const LiItem = styled(motion.li)`

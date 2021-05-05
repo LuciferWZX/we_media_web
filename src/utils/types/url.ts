@@ -3,6 +3,8 @@ export enum Url {
   fetch_account_info = 'account/fetch_account_info',
   get_uploading_video = 'video/getUploadingVideo',
   abort_processing_video = 'video/abortProcessingVideo',
+  upload_processing_video = 'video/upload_processing_video',
+  query_all_subarea = 'subarea/querySubarea',
 }
 export enum RequestMethod {
   POST = 'POST',

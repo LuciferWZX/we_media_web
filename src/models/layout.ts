@@ -3,6 +3,8 @@ import { abortProcessingVideo, queryProcessingVideo } from '@/services/video';
 import { CodeStatus, ResType } from '@/utils/types/url';
 import { VideoType } from '@/utils/types/video';
 import { message } from 'antd';
+import { queryAllSubarea } from '@/services/subarea';
+import { SubareaType } from '@/utils/types/subarea';
 
 export interface LayoutModelState {
   //左侧是否收起
@@ -11,12 +13,14 @@ export interface LayoutModelState {
   uploadVideoVisible: boolean;
   //上次的视频编辑
   processingVideo: VideoType | null;
+  //分区列表
+  subareaList: SubareaType[];
 }
 interface LayoutModelType {
   namespace: 'layout';
   state: LayoutModelState;
   effects: {
-    queryProcessingVideo: Effect;
+    initOpenUploadVideoData: Effect;
     abortProcessingVideo: Effect;
   };
   reducers: {
@@ -29,19 +33,33 @@ const layoutModel: LayoutModelType = {
     leftSiderScroll: false,
     uploadVideoVisible: false,
     processingVideo: null,
+    subareaList: [],
   },
   effects: {
-    *queryProcessingVideo({ payload }, { call, put }) {
-      const result: ResType<VideoType> = yield call(
-        queryProcessingVideo,
-        payload,
-      );
+    *initOpenUploadVideoData({ payload }, { all, call, put }) {
+      const [result, subareaResult]: [
+        ResType<VideoType>,
+        ResType<SubareaType>,
+      ] = yield all([
+        //@todo 查询未完成的视频
+        call(queryProcessingVideo, payload),
+        //@todo 查询所有的分区
+        call(queryAllSubarea),
+      ]);
       try {
         if (result.code === CodeStatus.succeed) {
           yield put({
             type: 'save',
             payload: {
               processingVideo: result.data,
+            },
+          });
+        }
+        if (subareaResult.code === CodeStatus.succeed) {
+          yield put({
+            type: 'save',
+            payload: {
+              subareaList: subareaResult.data,
             },
           });
         }

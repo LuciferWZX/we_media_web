@@ -2,10 +2,14 @@ import React, { FC, memo } from 'react';
 import {
   Alert,
   Button,
+  Cascader,
+  Form,
+  Input,
   message,
   Modal,
   Popconfirm,
   Progress,
+  Select,
   Space,
   Upload,
 } from 'antd';
@@ -14,12 +18,18 @@ import { ConnectState } from '@/models/connect';
 import { useReactive, useRequest, useUpdateEffect } from 'ahooks';
 import { IconFont } from '@/components';
 import {
+  StyledSubarea,
   StyledUploadActionButtons,
   StyledUploadVideo,
   UploadVideoModalContent,
 } from '../style';
+
 import { useModel } from '@@/plugin-model/useModel';
 import { UploadFile, UploadFileStatus } from 'antd/es/upload/interface';
+import { RcFile } from 'antd/lib/upload/interface';
+import { CascaderOptionType } from 'antd/es/cascader';
+
+const { Option } = Select;
 const { Dragger } = Upload;
 enum ProgressStatuses {
   normal = 'normal',
@@ -32,6 +42,12 @@ interface ProcessingVideo {
   percent?: number;
   status?: UploadFileStatus;
 }
+interface FormProps {
+  videoTitle: string;
+  videoDesc: string;
+  videoTags: string[];
+  subarea: string[];
+}
 interface IState {
   //已上传的文件列表
   //videoList: File[];
@@ -42,9 +58,12 @@ interface IState {
   isRecover: boolean;
   //是否显示alert框
   showAlert: boolean;
+  //标签的输入框
+  searchValue: string;
 }
 const UploadVideoModal: FC = () => {
   //@todo ----state--------------------
+  const [form] = Form.useForm<FormProps>();
   const dispatch = useDispatch();
   const { userId } = useModel('@@initialState', (model) => ({
     userId: model.initialState?.id,
@@ -54,10 +73,16 @@ const UploadVideoModal: FC = () => {
     processingVideo: null,
     isRecover: false,
     showAlert: false,
+    searchValue: '',
   });
   //@todo visible
   const visible = useSelector(
     (state: ConnectState) => state.layout.uploadVideoVisible,
+    (left, right) => left === right,
+  );
+  //@todo 分区列表
+  const subareaList = useSelector(
+    (state: ConnectState) => state.layout.subareaList,
     (left, right) => left === right,
   );
   //@todo 查询到的未完成的video
@@ -65,11 +90,11 @@ const UploadVideoModal: FC = () => {
     (state: ConnectState) => state.layout.processingVideo,
     (left, right) => left === right,
   );
-  //@todo 获取未完成的video
-  const queryProcessingVideoRequest = useRequest(
+  //@todo 打开上传视频初始化数据
+  const initDataRequest = useRequest(
     (params: { id: string }) => {
       return dispatch({
-        type: 'layout/queryProcessingVideo',
+        type: 'layout/initOpenUploadVideoData',
         payload: params,
       });
     },
@@ -77,7 +102,7 @@ const UploadVideoModal: FC = () => {
   );
   //@todo 删除未完成的video
   const abortProcessingVideoRequest = useRequest(
-    (params: { userId: string; videoTitle: string }) => {
+    (params: { userId: string; videoBucketKey: string }) => {
       return dispatch({
         type: 'layout/abortProcessingVideo',
         payload: params,
@@ -101,7 +126,7 @@ const UploadVideoModal: FC = () => {
   }, [state.uploadVideo]);
   useUpdateEffect(() => {
     if (visible && userId) {
-      queryProcessingVideoRequest.run({ id: userId }).then();
+      initDataRequest.run({ id: userId }).then();
     }
   }, [visible]);
   useUpdateEffect(() => {
@@ -116,9 +141,56 @@ const UploadVideoModal: FC = () => {
       };
     }
   }, [state.isRecover]);
+  useUpdateEffect(() => {
+    if (subareaList.length > 0 && subareaList[0].children.length > 0) {
+      form.setFieldsValue({
+        subarea: [subareaList[0].id, subareaList[0].children[0].id],
+      });
+    }
+  }, [subareaList]);
 
   //@todo ----监听end--------------------------
   //@todo ----function---------------------
+  /**
+   * @todo 渲染分区数据
+   */
+  const formatSubarea = (): CascaderOptionType[] => {
+    return subareaList.map((subarea) => {
+      return {
+        value: subarea.id,
+        label: subarea.label,
+        children: subarea.children.map((sc) => {
+          return {
+            value: sc.id,
+            label: (
+              <StyledSubarea>
+                <span className={'subarea-label'}>{sc.label}</span>
+                <span className={'subarea-desc'}>{sc.desc}</span>
+              </StyledSubarea>
+            ),
+          };
+        }),
+      };
+    });
+  };
+
+  /**
+   * @todo 渲染下拉列表
+   * @param label
+   */
+  const renderSubarea = (
+    label: Array<string | React.ReactNode>,
+  ): React.ReactNode => {
+    return label
+      .map((item) => {
+        if (typeof item !== 'string') {
+          // @ts-ignore
+          return item.props.children[0].props.children as any;
+        }
+        return item;
+      })
+      .join('→');
+  };
   /**
    * @todo 恢复之前的编辑状态
    */
@@ -130,6 +202,7 @@ const UploadVideoModal: FC = () => {
    * @todo 完全关闭之后
    */
   const afterClose = () => {
+    form.resetFields();
     dispatch({
       type: 'layout',
       payload: {
@@ -141,13 +214,17 @@ const UploadVideoModal: FC = () => {
     state.isRecover = false;
     state.showAlert = false;
   };
+
   /**
    * @todo 删除之前的数据
    */
   const deleteOldVideo = (): void => {
     if (userId && remoteProcessingVideo) {
       abortProcessingVideoRequest
-        .run({ userId: userId, videoTitle: remoteProcessingVideo.videoTitle })
+        .run({
+          userId: userId,
+          videoBucketKey: remoteProcessingVideo.videoBucketKey,
+        })
         .then((response: 'success' | 'failed') => {
           if (response === 'success') {
             state.showAlert = false;
@@ -155,9 +232,18 @@ const UploadVideoModal: FC = () => {
         });
     }
   };
-  const deleteVideo = (): void => {
-    state.uploadVideo = null;
-    state.processingVideo = null;
+  //@todo 视频上传之前做校验
+  const beforeUpload = (file: RcFile): boolean => {
+    message.destroy();
+    const maxSize800 = file.size / 1024 / 1024 <= 800;
+    const maxLength = file.name.length <= 80;
+    if (!maxLength) {
+      message.error('视频标题长度不能超过80个字符').then();
+    }
+    if (!maxSize800) {
+      message.error('视频大小不能大于800M').then();
+    }
+    return maxSize800;
   };
   const renderUploadVideo = (): React.ReactNode => {
     if (state.processingVideo) {
@@ -173,12 +259,17 @@ const UploadVideoModal: FC = () => {
           {status === 'done' && (
             <StyledUploadActionButtons>
               <Popconfirm
-                onConfirm={deleteVideo}
+                onConfirm={deleteOldVideo}
                 title="确定要删除这个视频吗？"
                 okText="确认"
                 cancelText="取消"
               >
-                <Button type={'link'}>删除</Button>
+                <Button
+                  loading={abortProcessingVideoRequest.loading}
+                  type={'link'}
+                >
+                  删除
+                </Button>
               </Popconfirm>
             </StyledUploadActionButtons>
           )}
@@ -201,6 +292,7 @@ const UploadVideoModal: FC = () => {
       <div className={'upload-box'}>
         <IconFont className={'upload-icon'} type={'icon-upload_flat'} />
         <div className={'desc-upload'}>拖拽上传或者点击上传</div>
+        <div className={'upload-help'}>视频文件最大不能超过800MB</div>
       </div>
     );
   };
@@ -286,13 +378,15 @@ const UploadVideoModal: FC = () => {
           accept={'video/mp4'}
           multiple={false}
           disabled={!!state.uploadVideo || !!state.processingVideo}
+          beforeUpload={beforeUpload}
           fileList={state.uploadVideo !== null ? [state.uploadVideo] : []}
           showUploadList={false}
           action={`/api/video/uploadVideo?id=${userId}`}
           onChange={(info) => {
-            state.uploadVideo = info.file;
             const { status } = info.file;
-
+            if (status) {
+              state.uploadVideo = info.file;
+            }
             if (status !== 'uploading') {
               console.log(info.file, info.fileList);
             }
@@ -306,6 +400,81 @@ const UploadVideoModal: FC = () => {
           {renderUploadVideo()}
         </Dragger>
       </UploadVideoModalContent>
+      <Form
+        layout={'vertical'}
+        form={form}
+        initialValues={{
+          subarea: [],
+        }}
+      >
+        <Form.Item
+          name={'videoTitle'}
+          label={'视频标题'}
+          style={{ marginTop: 10 }}
+          rules={[
+            { required: true, message: '请输入视频标题' },
+            { whitespace: true, message: '请输入视频标题' },
+          ]}
+        >
+          <Input.TextArea
+            size={'large'}
+            autoSize={{ minRows: 1, maxRows: 1 }}
+            showCount={true}
+            placeholder={'请输入'}
+            maxLength={80}
+          />
+        </Form.Item>
+        <Form.Item
+          name={'subarea'}
+          label={'分区'}
+          rules={[{ required: true, message: '请选择分区' }]}
+        >
+          <Cascader
+            displayRender={renderSubarea}
+            size={'large'}
+            allowClear={false}
+            options={formatSubarea()}
+            placeholder="请选择分区"
+          />
+        </Form.Item>
+        <Form.Item
+          name={'tags'}
+          label={'标签'}
+          rules={[{ required: true, message: '请选择标签' }]}
+        >
+          <Select
+            searchValue={state.searchValue}
+            // onSearch={val=>{
+            //   console.log(12,val);
+            //   state.searchValue = val.slice(0, 5);
+            // }}
+            // onSelect={()=>{
+            //   state.searchValue = '';}}
+            open={false}
+            placeholder={'请选择标签'}
+            size={'large'}
+            mode="tags"
+            style={{ width: '100%' }}
+            tokenSeparators={[',']}
+          >
+            <Option value={'aaa'}>ccc</Option>
+          </Select>
+        </Form.Item>
+        <Form.Item
+          name={'videoDesc'}
+          label={'视频描述'}
+          className={'input-textarea'}
+        >
+          <Input.TextArea
+            showCount={true}
+            size={'large'}
+            autoSize={{ minRows: 2, maxRows: 6 }}
+            allowClear={true}
+            maxLength={200}
+            placeholder={'～暂无描述'}
+          />
+        </Form.Item>
+      </Form>
     </Modal>
   );
 };

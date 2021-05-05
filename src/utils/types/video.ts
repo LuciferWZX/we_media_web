@@ -6,6 +6,7 @@ export interface VideoType {
   videoImage: null | string;
   videoTags: string[];
   videoTitle: string;
+  videoBucketKey: string;
 }
 export enum VideoEditStatus {
   processing = 'processing', //编辑中
