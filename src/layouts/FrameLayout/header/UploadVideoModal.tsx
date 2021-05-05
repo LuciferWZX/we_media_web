@@ -11,6 +11,7 @@ import {
   Progress,
   Select,
   Space,
+  Tag,
   Upload,
 } from 'antd';
 import { useDispatch, useSelector } from '@@/plugin-dva/exports';
@@ -441,15 +442,35 @@ const UploadVideoModal: FC = () => {
           name={'tags'}
           label={'标签'}
           rules={[{ required: true, message: '请选择标签' }]}
+          getValueFromEvent={(e) => {
+            if (e.length > 5) {
+              message
+                .open({
+                  duration: 2,
+                  type: 'warning',
+                  content: '最多不超过5个标签',
+                  key: 'warn',
+                })
+                .then();
+            }
+            return e.map((tag: string) => tag.slice(0, 20)).slice(0, 5);
+          }}
         >
           <Select
-            searchValue={state.searchValue}
-            // onSearch={val=>{
-            //   console.log(12,val);
-            //   state.searchValue = val.slice(0, 5);
-            // }}
-            // onSelect={()=>{
-            //   state.searchValue = '';}}
+            tagRender={({ label, value, closable, onClose }) => {
+              return (
+                <Tag
+                  className={'select-tag'}
+                  color={'blue'}
+                  //onMouseDown={onPreventMouseDown}
+                  closable={closable}
+                  onClose={onClose}
+                  style={{ marginRight: 3 }}
+                >
+                  {label}
+                </Tag>
+              );
+            }}
             open={false}
             placeholder={'请选择标签'}
             size={'large'}
