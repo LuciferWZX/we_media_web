@@ -75,6 +75,18 @@ export const UploadVideoModalContent = styled.div`
     }
   }
 `;
+export const StyledTags = styled.div`
+  overflow: hidden;
+  .select-tag {
+    cursor: pointer;
+  }
+  .is-selected {
+    background-color: #f4f5f7;
+    border-color: #f4f5f7;
+    color: #333333;
+    cursor: not-allowed;
+  }
+`;
 export const StyledSubarea = styled.div`
   .subarea-label {
     margin-right: 20px;

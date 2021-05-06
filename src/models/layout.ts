@@ -5,6 +5,8 @@ import { VideoType } from '@/utils/types/video';
 import { message } from 'antd';
 import { queryAllSubarea } from '@/services/subarea';
 import { SubareaType } from '@/utils/types/subarea';
+import { queryAllTags } from '@/services/tags';
+import { TagType } from '@/utils/types/tag';
 
 export interface LayoutModelState {
   //左侧是否收起
@@ -15,6 +17,8 @@ export interface LayoutModelState {
   processingVideo: VideoType | null;
   //分区列表
   subareaList: SubareaType[];
+  //标签列表
+  tagList: TagType[];
 }
 interface LayoutModelType {
   namespace: 'layout';
@@ -34,17 +38,21 @@ const layoutModel: LayoutModelType = {
     uploadVideoVisible: false,
     processingVideo: null,
     subareaList: [],
+    tagList: [],
   },
   effects: {
     *initOpenUploadVideoData({ payload }, { all, call, put }) {
-      const [result, subareaResult]: [
+      const [result, subareaResult, tagsResult]: [
         ResType<VideoType>,
         ResType<SubareaType>,
+        ResType<TagType[]>,
       ] = yield all([
         //@todo 查询未完成的视频
         call(queryProcessingVideo, payload),
         //@todo 查询所有的分区
         call(queryAllSubarea),
+        //@todo 查询所有的Tag
+        call(queryAllTags),
       ]);
       try {
         if (result.code === CodeStatus.succeed) {
@@ -60,6 +68,14 @@ const layoutModel: LayoutModelType = {
             type: 'save',
             payload: {
               subareaList: subareaResult.data,
+            },
+          });
+        }
+        if (tagsResult.code === CodeStatus.succeed) {
+          yield put({
+            type: 'save',
+            payload: {
+              tagList: tagsResult.data,
             },
           });
         }

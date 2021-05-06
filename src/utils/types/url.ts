@@ -5,6 +5,7 @@ export enum Url {
   abort_processing_video = 'video/abortProcessingVideo',
   upload_processing_video = 'video/upload_processing_video',
   query_all_subarea = 'subarea/querySubarea',
+  query_all_tags = 'video/queryAllTags',
 }
 export enum RequestMethod {
   POST = 'POST',

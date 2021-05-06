@@ -20,6 +20,7 @@ import { useReactive, useRequest, useUpdateEffect } from 'ahooks';
 import { IconFont } from '@/components';
 import {
   StyledSubarea,
+  StyledTags,
   StyledUploadActionButtons,
   StyledUploadVideo,
   UploadVideoModalContent,
@@ -29,8 +30,8 @@ import { useModel } from '@@/plugin-model/useModel';
 import { UploadFile, UploadFileStatus } from 'antd/es/upload/interface';
 import { RcFile } from 'antd/lib/upload/interface';
 import { CascaderOptionType } from 'antd/es/cascader';
+import classnames from 'classnames';
 
-const { Option } = Select;
 const { Dragger } = Upload;
 enum ProgressStatuses {
   normal = 'normal',
@@ -84,6 +85,11 @@ const UploadVideoModal: FC = () => {
   //@todo 分区列表
   const subareaList = useSelector(
     (state: ConnectState) => state.layout.subareaList,
+    (left, right) => left === right,
+  );
+  //@todo 标签列表
+  const tagList = useSelector(
+    (state: ConnectState) => state.layout.tagList,
     (left, right) => left === right,
   );
   //@todo 查询到的未完成的video
@@ -439,7 +445,7 @@ const UploadVideoModal: FC = () => {
           />
         </Form.Item>
         <Form.Item
-          name={'tags'}
+          name={'videoTags'}
           label={'标签'}
           rules={[{ required: true, message: '请选择标签' }]}
           getValueFromEvent={(e) => {
@@ -477,9 +483,43 @@ const UploadVideoModal: FC = () => {
             mode="tags"
             style={{ width: '100%' }}
             tokenSeparators={[',']}
-          >
-            <Option value={'aaa'}>ccc</Option>
-          </Select>
+          />
+        </Form.Item>
+        <Form.Item
+          shouldUpdate={(prevValues: FormProps, nextValues: FormProps) =>
+            prevValues.videoTags !== nextValues.videoTags
+          }
+        >
+          {({ getFieldValue }) => {
+            const videoTags = getFieldValue('videoTags');
+            return (
+              <Form.Item
+                style={{ flexDirection: 'row', alignItems: 'baseline' }}
+                labelCol={{ span: 3 }}
+                wrapperCol={{ span: 21 }}
+                label={'所有标签'}
+              >
+                <StyledTags>
+                  <Space wrap direction={'horizontal'}>
+                    {tagList.map((tag) => {
+                      return (
+                        <Tag
+                          className={classnames({
+                            'select-tag': true,
+                            'is-selected': true,
+                          })}
+                          key={tag.label}
+                          color="blue"
+                        >
+                          {tag.label}
+                        </Tag>
+                      );
+                    })}
+                  </Space>
+                </StyledTags>
+              </Form.Item>
+            );
+          }}
         </Form.Item>
         <Form.Item
           name={'videoDesc'}
