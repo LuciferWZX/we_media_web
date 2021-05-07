@@ -95,7 +95,7 @@ const Login: FC = () => {
       email: values.email,
       password: values.password,
     });
-
+    message.destroy();
     if (res.code === CodeStatus.succeed) {
       setUser(res.data);
       message.success('登录成功');

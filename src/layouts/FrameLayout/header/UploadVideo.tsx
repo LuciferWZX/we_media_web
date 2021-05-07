@@ -3,7 +3,6 @@ import React, { FC } from 'react';
 import { Button, Form, Input, Upload } from 'antd';
 import { IconFont } from '@/components';
 import { useLockFn } from 'ahooks';
-import { getObjectURL } from '@/utils/util';
 import ReactPlayer from 'react-player';
 interface FormProps {
   videoTitle: string;
@@ -73,8 +72,6 @@ const UploadVideo: FC = () => {
                 </Form.Item>
               );
             }
-            const objUrl = getObjectURL(videoFile[0].originFileObj);
-            console.log('objUrl:', objUrl);
             return (
               <div className={'video-preview'}>
                 <ReactPlayer

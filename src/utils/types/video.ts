@@ -1,4 +1,4 @@
-export interface VideoType {
+export interface Video {
   editStatus: VideoEditStatus;
   id: string;
   uploaderId: string;
@@ -7,8 +7,13 @@ export interface VideoType {
   videoTags: string[];
   videoTitle: string;
   videoBucketKey: string;
+  videoLocation: string;
 }
 export enum VideoEditStatus {
   processing = 'processing', //编辑中
   finished = 'finished', //已完成
+}
+export enum VideoType {
+  homemade = 0,
+  reprint = 1,
 }

@@ -40,6 +40,7 @@ const userModel: UserModelType = {
             },
           });
         } else {
+          message.destroy();
           message.error(res.message).then();
         }
       } catch (e) {
