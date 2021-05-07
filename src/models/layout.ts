@@ -1,7 +1,7 @@
 import { ImmerReducer, Effect } from 'umi';
 import { abortProcessingVideo, queryProcessingVideo } from '@/services/video';
 import { CodeStatus, ResType } from '@/utils/types/url';
-import { VideoType } from '@/utils/types/video';
+import { Video } from '@/utils/types/video';
 import { message } from 'antd';
 import { queryAllSubarea } from '@/services/subarea';
 import { SubareaType } from '@/utils/types/subarea';
@@ -14,7 +14,7 @@ export interface LayoutModelState {
   //上传视频的visible
   uploadVideoVisible: boolean;
   //上次的视频编辑
-  processingVideo: VideoType | null;
+  processingVideo: Video | null;
   //分区列表
   subareaList: SubareaType[];
   //标签列表
@@ -43,7 +43,7 @@ const layoutModel: LayoutModelType = {
   effects: {
     *initOpenUploadVideoData({ payload }, { all, call, put }) {
       const [result, subareaResult, tagsResult]: [
-        ResType<VideoType>,
+        ResType<Video>,
         ResType<SubareaType>,
         ResType<TagType[]>,
       ] = yield all([
@@ -84,7 +84,7 @@ const layoutModel: LayoutModelType = {
       }
     },
     *abortProcessingVideo({ payload }, { call }) {
-      const result: ResType<VideoType | null> = yield call(
+      const result: ResType<Video | null> = yield call(
         abortProcessingVideo,
         payload,
       );
