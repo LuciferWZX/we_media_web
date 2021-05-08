@@ -34,6 +34,7 @@ import { CascaderOptionType } from 'antd/es/cascader';
 import classnames from 'classnames';
 import { VideoType } from '@/utils/types/video';
 import { getVideoImage } from '@/utils/util';
+import VideoCovers from '@/layouts/FrameLayout/header/VideoCovers';
 
 const { Dragger } = Upload;
 enum ProgressStatuses {
@@ -162,36 +163,39 @@ const UploadVideoModal: FC = () => {
       });
     }
   }, [subareaList]);
-  // useUpdateEffect(() => {
-  //   if (state.uploadVideo && state.uploadVideo.status) {
-  //     console.log(333, state.uploadVideo);
-  //     if (state.uploadVideo.status === 'done') {
-  //       getVideoImage(state.uploadVideo.response.data.videoLocation).then(
-  //         (imgUrl: string) => {
-  //           console.log('截取的图片uploadVideo', imgUrl);
-  //         },
-  //       );
-  //     }
-  //   } else if (state.processingVideo && remoteProcessingVideo) {
-  //     console.log(444, remoteProcessingVideo);
-  //     getVideoImage(remoteProcessingVideo.videoLocation).then(
-  //       (imgUrl: string) => {
-  //         console.log('截取的图片remoteProcessingVideo', imgUrl);
-  //       },
-  //     );
-  //   }
-  // }, [state.uploadVideo, remoteProcessingVideo, state.processingVideo]);
+  useUpdateEffect(() => {
+    if (state.uploadVideo && state.uploadVideo.status) {
+      console.log(333, state.uploadVideo);
+      if (state.uploadVideo.status === 'done') {
+        getVideoImage(state.uploadVideo.response.data.videoLocation).then(
+          (covers: string[]) => {
+            console.log('截取的图片uploadVideo', covers);
+          },
+        );
+      }
+    } else if (state.processingVideo && remoteProcessingVideo) {
+      console.log(444, remoteProcessingVideo);
+      getVideoImage(remoteProcessingVideo.videoLocation).then(
+        (covers: string[]) => {
+          console.log('截取的图片remoteProcessingVideo', covers);
+        },
+      );
+    }
+  }, [state.uploadVideo, remoteProcessingVideo, state.processingVideo]);
 
   //@todo ----监听end--------------------------
   //@todo ----function---------------------
   const renderVideo = (): React.ReactNode => {
     let url = '';
-    if (state.uploadVideo) {
+    if (state.uploadVideo && state.uploadVideo.status === 'done') {
       url = state.uploadVideo.response.data.videoLocation;
     } else if (state.processingVideo && remoteProcessingVideo) {
       url = remoteProcessingVideo.videoLocation;
     }
-    return <VideoPlayer url={url} />;
+    if (url !== '') {
+      return <VideoPlayer id={'upload-video'} url={url} />;
+    }
+    return '';
   };
   /**
    * @todo 渲染分区数据
@@ -461,7 +465,6 @@ const UploadVideoModal: FC = () => {
           {renderUploadVideo()}
         </Dragger>
       </UploadVideoModalContent>
-      {renderVideo()}
       <Form
         layout={'vertical'}
         form={form}
@@ -477,6 +480,9 @@ const UploadVideoModal: FC = () => {
           } as FormProps
         }
       >
+        <Form.Item label={'视频封面'}>
+          <VideoCovers />
+        </Form.Item>
         <Form.Item
           name={'videoTitle'}
           label={'视频标题'}

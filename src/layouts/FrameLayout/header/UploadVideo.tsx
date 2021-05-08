@@ -1,9 +1,7 @@
 import React, { FC } from 'react';
-
 import { Button, Form, Input, Upload } from 'antd';
 import { IconFont } from '@/components';
 import { useLockFn } from 'ahooks';
-import ReactPlayer from 'react-player';
 interface FormProps {
   videoTitle: string;
   videoFile: File;
@@ -72,15 +70,7 @@ const UploadVideo: FC = () => {
                 </Form.Item>
               );
             }
-            return (
-              <div className={'video-preview'}>
-                <ReactPlayer
-                  width={'100%'}
-                  height={200}
-                  url={videoFile[0].originFileObj}
-                />
-              </div>
-            );
+            return <div className={'video-preview'}>sss</div>;
           }}
         </Form.Item>
         <Form.Item
