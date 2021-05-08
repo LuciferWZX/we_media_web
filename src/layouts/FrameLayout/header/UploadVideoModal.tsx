@@ -18,7 +18,7 @@ import {
 import { useDispatch, useSelector } from '@@/plugin-dva/exports';
 import { ConnectState } from '@/models/connect';
 import { useReactive, useRequest, useUpdateEffect } from 'ahooks';
-import { IconFont } from '@/components';
+import { IconFont, VideoPlayer } from '@/components';
 import {
   StyledSubarea,
   StyledTags,
@@ -33,6 +33,8 @@ import { RcFile } from 'antd/lib/upload/interface';
 import { CascaderOptionType } from 'antd/es/cascader';
 import classnames from 'classnames';
 import { VideoType } from '@/utils/types/video';
+import { getVideoImage } from '@/utils/util';
+import VideoCovers from '@/layouts/FrameLayout/header/VideoCovers';
 
 const { Dragger } = Upload;
 enum ProgressStatuses {
@@ -47,11 +49,13 @@ interface ProcessingVideo {
   status?: UploadFileStatus;
 }
 interface FormProps {
-  videoType: VideoType;
-  videoTitle: string;
-  videoDesc: string;
-  videoTags: string[];
-  subarea: string[];
+  videoType: VideoType; //视频类型（自制、转载）
+  reprintAddress: string; //转载地址
+  videoTitle: string; //视频标题
+  videImage: string; //视频封面地址
+  videoDesc: string; //视频描述
+  videoTags: string[]; //视频标签
+  subarea: string[]; //视频分区
 }
 interface IState {
   //已上传的文件列表
@@ -159,9 +163,40 @@ const UploadVideoModal: FC = () => {
       });
     }
   }, [subareaList]);
+  useUpdateEffect(() => {
+    if (state.uploadVideo && state.uploadVideo.status) {
+      console.log(333, state.uploadVideo);
+      if (state.uploadVideo.status === 'done') {
+        getVideoImage(state.uploadVideo.response.data.videoLocation).then(
+          (covers: string[]) => {
+            console.log('截取的图片uploadVideo', covers);
+          },
+        );
+      }
+    } else if (state.processingVideo && remoteProcessingVideo) {
+      console.log(444, remoteProcessingVideo);
+      getVideoImage(remoteProcessingVideo.videoLocation).then(
+        (covers: string[]) => {
+          console.log('截取的图片remoteProcessingVideo', covers);
+        },
+      );
+    }
+  }, [state.uploadVideo, remoteProcessingVideo, state.processingVideo]);
 
   //@todo ----监听end--------------------------
   //@todo ----function---------------------
+  const renderVideo = (): React.ReactNode => {
+    let url = '';
+    if (state.uploadVideo && state.uploadVideo.status === 'done') {
+      url = state.uploadVideo.response.data.videoLocation;
+    } else if (state.processingVideo && remoteProcessingVideo) {
+      url = remoteProcessingVideo.videoLocation;
+    }
+    if (url !== '') {
+      return <VideoPlayer id={'upload-video'} url={url} />;
+    }
+    return '';
+  };
   /**
    * @todo 渲染分区数据
    */
@@ -184,7 +219,21 @@ const UploadVideoModal: FC = () => {
       };
     });
   };
-
+  const selectTag = (label: string) => {
+    const videoTags = form.getFieldValue('videoTags');
+    if (videoTags.length >= 5) {
+      if (!videoTags.includes(label)) {
+        message.destroy();
+        message.error('(〜￣△￣)〜允许添加的标签已经到达了上限').then();
+      }
+    } else {
+      if (!videoTags.includes(label)) {
+        form.setFieldsValue({
+          videoTags: videoTags.concat(label),
+        });
+      }
+    }
+  };
   /**
    * @todo 渲染下拉列表
    * @param label
@@ -208,22 +257,6 @@ const UploadVideoModal: FC = () => {
   const continueEdit = (): void => {
     state.isRecover = true;
     state.showAlert = false;
-  };
-  /**
-   * @todo 选择标签
-   * @param tagLabel
-   */
-  const choiceTag = (tagLabel: string) => {
-    const videoTags: string[] = form.getFieldValue('videoTags');
-
-    if (!videoTags.includes(tagLabel)) {
-      if (videoTags.length >= 5) {
-        message.destroy();
-        message.error('(〜￣△￣)〜允许添加的标签已到达上限').then();
-      } else {
-        form.setFieldsValue({ videoTags: videoTags.concat(tagLabel) });
-      }
-    }
   };
   /**
    * @todo 完全关闭之后
@@ -251,9 +284,8 @@ const UploadVideoModal: FC = () => {
         .run({
           userId: userId,
           videoBucketKey:
-            (remoteProcessingVideo && remoteProcessingVideo.videoBucketKey) ||
-            (state.uploadVideo &&
-              state.uploadVideo.response.data.videoBucketKey),
+            remoteProcessingVideo?.videoBucketKey ||
+            state.uploadVideo?.response.data.videoBucketKey,
         })
         .then((response: 'success' | 'failed') => {
           if (response === 'success') {
@@ -416,6 +448,7 @@ const UploadVideoModal: FC = () => {
           action={`/api/video/uploadVideo?id=${userId}`}
           onChange={(info) => {
             const { status } = info.file;
+            message.destroy();
             if (status) {
               state.uploadVideo = info.file;
             }
@@ -435,17 +468,37 @@ const UploadVideoModal: FC = () => {
       <Form
         layout={'vertical'}
         form={form}
-        initialValues={{
-          subarea: [],
-          videoTags: [],
-          videoType: VideoType.homemade,
-        }}
+        initialValues={
+          {
+            videoType: VideoType.homemade,
+            reprintAddress: '',
+            videoTitle: '',
+            videImage: '',
+            videoDesc: '',
+            subarea: [],
+            videoTags: [],
+          } as FormProps
+        }
       >
+        <Form.Item label={'视频封面'}>
+          <VideoCovers />
+        </Form.Item>
+        <Form.Item
+          name={'videoTitle'}
+          label={'视频标题'}
+          style={{ marginTop: 10 }}
+          tooltip={'视频标题最大不超过80个字符'}
+          rules={[
+            { required: true, message: '请输入视频标题' },
+            { whitespace: true, message: '请输入视频标题' },
+          ]}
+        >
+          <Input size={'large'} placeholder={'请输入'} maxLength={80} />
+        </Form.Item>
         <Form.Item
           name={'videoType'}
-          label={'类型'}
-          style={{ marginTop: 10 }}
-          rules={[{ required: true, message: '请选择视频类型' }]}
+          label="类型"
+          rules={[{ required: true, message: '请选择类型' }]}
         >
           <Radio.Group>
             <Radio value={VideoType.homemade}>自制</Radio>
@@ -465,42 +518,25 @@ const UploadVideoModal: FC = () => {
                 return (
                   <Form.Item
                     name={'reprintAddress'}
+                    label={'转载地址'}
+                    tooltip={'转载地址最大不超过200个字符'}
                     rules={[
                       { required: true, message: '请输入转载地址' },
                       { whitespace: true, message: '请输入转载地址' },
                     ]}
                   >
-                    <Input.TextArea
+                    <Input
                       size={'large'}
-                      autoSize={{ minRows: 1, maxRows: 1 }}
-                      showCount={true}
-                      maxLength={200}
                       placeholder={
                         '转载视频请注明来源（例：转自http://www.xxxx.com/yyyy），注明来源会更快地通过审核哦'
                       }
+                      maxLength={200}
                     />
                   </Form.Item>
                 );
               }
             }
           }}
-        </Form.Item>
-        <Form.Item
-          name={'videoTitle'}
-          label={'视频标题'}
-          style={{ marginTop: 10 }}
-          rules={[
-            { required: true, message: '请输入视频标题' },
-            { whitespace: true, message: '请输入视频标题' },
-          ]}
-        >
-          <Input.TextArea
-            size={'large'}
-            autoSize={{ minRows: 1, maxRows: 1 }}
-            showCount={true}
-            placeholder={'请输入'}
-            maxLength={80}
-          />
         </Form.Item>
         <Form.Item
           name={'subarea'}
@@ -517,12 +553,12 @@ const UploadVideoModal: FC = () => {
         </Form.Item>
         <Form.Item
           name={'videoTags'}
-          label={'标签（最多添加5个标签）'}
+          label={'标签'}
           rules={[{ required: true, message: '请选择标签' }]}
           getValueFromEvent={(e) => {
             if (e.length > 5) {
               message.destroy();
-              message.error('(〜￣△￣)〜允许添加的标签已到达上限').then();
+              message.error('(〜￣△￣)〜允许添加的标签已经到达了限').then();
             }
             return e.map((tag: string) => tag.slice(0, 20)).slice(0, 5);
           }}
@@ -554,7 +590,6 @@ const UploadVideoModal: FC = () => {
           shouldUpdate={(prevValues: FormProps, nextValues: FormProps) =>
             prevValues.videoTags !== nextValues.videoTags
           }
-          noStyle={true}
         >
           {({ getFieldValue }) => {
             const videoTags = getFieldValue('videoTags');
@@ -570,11 +605,11 @@ const UploadVideoModal: FC = () => {
                     {tagList.map((tag) => {
                       return (
                         <Tag
+                          onClick={() => selectTag(tag.label)}
                           className={classnames({
                             'select-tag': true,
                             'is-selected': videoTags.includes(tag.label),
                           })}
-                          onClick={() => choiceTag(tag.label)}
                           key={tag.label}
                           color="blue"
                         >
@@ -590,7 +625,8 @@ const UploadVideoModal: FC = () => {
         </Form.Item>
         <Form.Item
           name={'videoDesc'}
-          label={'视频描述'}
+          label={'视频简介'}
+          tooltip={'视频描述最大不超过2000个字符'}
           className={'input-textarea'}
         >
           <Input.TextArea
@@ -598,8 +634,8 @@ const UploadVideoModal: FC = () => {
             size={'large'}
             autoSize={{ minRows: 2, maxRows: 6 }}
             allowClear={true}
-            maxLength={200}
-            placeholder={'～暂无描述'}
+            maxLength={2000}
+            placeholder={'～暂无简介'}
           />
         </Form.Item>
       </Form>

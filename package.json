@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@ant-design/pro-layout": "6.16.3",
+    "@types/video.js": "^7.3.16",
     "@umijs/preset-react": "1.x",
     "ahooks": "2.10.1",
     "antd": "4.15.4",
@@ -28,11 +29,12 @@
     "dayjs": "^1.10.4",
     "framer-motion": "^4.1.10",
     "nprogress": "^0.2.0",
-    "react-player": "^2.9.0",
+    "react-hook-videojs": "^2.0.0",
     "storejs": "^1.1.0",
     "styled-components": "5.2.3",
     "swiper": "6.5.7",
-    "umi": "3.4.8"
+    "umi": "3.4.8",
+    "video.js": "^7.11.8"
   },
   "devDependencies": {
     "@types/nprogress": "^0.2.0",

@@ -83,14 +83,21 @@ const layoutModel: LayoutModelType = {
         console.log('查询尚未完成的视频出错：', e);
       }
     },
-    *abortProcessingVideo({ payload }, { call }) {
+    *abortProcessingVideo({ payload }, { call, put }) {
       const result: ResType<Video | null> = yield call(
         abortProcessingVideo,
         payload,
       );
       try {
+        message.destroy();
         if (result.code === CodeStatus.succeed) {
           console.log('删除成功');
+          yield put({
+            type: 'save',
+            payload: {
+              processingVideo: null,
+            },
+          });
           return 'success';
         } else {
           message.error(result.message).then();
