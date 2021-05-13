@@ -69,6 +69,8 @@ interface IState {
   showAlert: boolean;
   //标签的输入框
   searchValue: string;
+  //视频的封面
+  covers: string[];
 }
 message.config({ duration: 1 });
 const UploadVideoModal: FC = () => {
@@ -84,6 +86,7 @@ const UploadVideoModal: FC = () => {
     isRecover: false,
     showAlert: false,
     searchValue: '',
+    covers: [],
   });
   //@todo visible
   const visible = useSelector(
@@ -167,19 +170,24 @@ const UploadVideoModal: FC = () => {
     if (state.uploadVideo && state.uploadVideo.status) {
       console.log(333, state.uploadVideo);
       if (state.uploadVideo.status === 'done') {
-        getVideoImage(state.uploadVideo.response.data.videoLocation).then(
-          (covers: string[]) => {
-            console.log('截取的图片uploadVideo', covers);
-          },
-        );
+        for (let i = 0; i < 3; i++) {
+          getVideoImage(
+            i * 3,
+            state.uploadVideo.response.data.videoLocation,
+          ).then((covers: string) => {
+            state.covers = state.covers.concat(covers);
+          });
+        }
       }
     } else if (state.processingVideo && remoteProcessingVideo) {
       console.log(444, remoteProcessingVideo);
-      getVideoImage(remoteProcessingVideo.videoLocation).then(
-        (covers: string[]) => {
-          console.log('截取的图片remoteProcessingVideo', covers);
-        },
-      );
+      for (let i = 0; i < 3; i++) {
+        getVideoImage(i * 3, remoteProcessingVideo.videoLocation).then(
+          (covers: string) => {
+            state.covers = state.covers.concat(covers);
+          },
+        );
+      }
     }
   }, [state.uploadVideo, remoteProcessingVideo, state.processingVideo]);
 
@@ -480,8 +488,8 @@ const UploadVideoModal: FC = () => {
           } as FormProps
         }
       >
-        <Form.Item label={'视频封面'}>
-          <VideoCovers />
+        <Form.Item name={'videoImage'} label={'视频封面'}>
+          <VideoCovers covers={state.covers} />
         </Form.Item>
         <Form.Item
           name={'videoTitle'}

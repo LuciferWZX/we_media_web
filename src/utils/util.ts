@@ -3,10 +3,11 @@ export enum ScaleType {
   heightMore = 'heightMore', //16:10
 }
 export function getVideoImage(
+  second: number = 1,
   url: string,
   width: number = 1152,
   type: ScaleType = ScaleType.normal,
-): Promise<string[]> {
+): Promise<string> {
   console.log(123, url);
   return new Promise(function (resolve, reject) {
     let dataURL: string = '';
@@ -24,24 +25,22 @@ export function getVideoImage(
         break;
       }
     }
-    video.setAttribute('autoplay', 'autoplay');
-
-    video.addEventListener('loadeddata', function () {
+    video.muted = true;
+    video.autoplay = true;
+    video.currentTime = second;
+    video.addEventListener('loadeddata', captureVideoCover);
+    function captureVideoCover() {
       let canvas = document.createElement('canvas'),
         width = video.width, //canvas的尺寸和图片一样
         height = video.height;
       canvas.width = width;
       canvas.height = height;
-      let covers: string[] = [];
-      for (let i = 0; i < 3; i++) {
-        video.currentTime = i + 3;
-        // @ts-ignore
-        canvas.getContext('2d').drawImage(video, 0, 0, width, height); //绘制canvas
-        dataURL = canvas.toDataURL('image/jpeg'); //转换为base64
-        covers = covers.concat(dataURL);
-      }
-
-      resolve(covers);
-    });
+      // @ts-ignore
+      canvas.getContext('2d').drawImage(video, 0, 0, width, height); //绘制canvas
+      dataURL = canvas.toDataURL('image/jpeg'); //转换为base64
+      video.removeEventListener('loadeddata', captureVideoCover);
+      video.pause();
+      resolve(dataURL);
+    }
   });
 }
